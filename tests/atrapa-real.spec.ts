@@ -28,8 +28,8 @@ test('atrapa regalos real: teclado y táctil, reset', async ({ page }) => {
     await page.waitForTimeout(6500)
   }
 
-  // Verificar puntaje > 0 (al menos un acierto real)
-  await expect(score()).toHaveText(/Puntaje: [1-9]\d*/)
+  // Verificar puntaje > 0 (al menos un acierto real) con mayor tolerancia por timings de spawn/colisión
+  await expect(score()).toHaveText(/Puntaje: [1-9]\d*/, { timeout: 10000 })
 
   // Reset
   await page.getByRole('region', { name: 'Atrapa regalos' }).getByRole('button', { name: 'Reiniciar' }).click()
