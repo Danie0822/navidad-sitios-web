@@ -103,9 +103,9 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
       const grid = page.getByRole('grid', { name: /Tablero de memoria/ })
       await grid.waitFor()
       const cells = grid.getByRole('gridcell')
+      // Abrir una carta (estado seleccionado/abierto) y mantenerla abierta (no seleccionar la segunda)
       await cells.nth(0).click().catch(() => {})
-      await cells.nth(1).click().catch(() => {})
-      // Asegurar que al menos una celda quedó abierta antes de medir
+      // Asegurar que quedó abierta antes de medir
       await page.locator('#memoria button[role="gridcell"][aria-pressed="true"]').first().waitFor({ timeout: 2000 }).catch(() => {})
       items.push({ sel: '#memoria button[role="gridcell"][aria-pressed="true"]', label: 'mem-card-open' })
       items.push({ sel: '#memoria button[role="gridcell"][aria-pressed="false"]', label: 'mem-card-closed' })
