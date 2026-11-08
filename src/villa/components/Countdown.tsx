@@ -21,16 +21,16 @@ export function Countdown() {
         Cuenta regresiva a Navidad · Objetivo {target.toLocaleDateString()} 00:00 (hora local)
       </p>
       <div
-        className="mt-3 grid grid-cols-4 gap-3 sm:gap-4 max-w-xl mx-auto"
+        className="mt-3 grid grid-cols-4 gap-8 sm:gap-10 max-w-xl mx-auto"
         role="timer"
         aria-live="polite"
         aria-atomic="true"
         aria-label="Tiempo restante"
       >
-        <TimeBox label="días" value={days} />
-        <TimeBox label="horas" value={hours} />
-        <TimeBox label="min" value={minutes} />
-        <TimeBox label="seg" value={seconds} />
+        <TimeNum label="DÍAS" value={days} />
+        <TimeNum label="HORAS" value={hours} />
+        <TimeNum label="MIN" value={minutes} />
+        <TimeNum label="SEG" value={seconds} />
       </div>
       {totalSeconds === 0 ? (
         <p className="mt-3 text-emerald-200">¡Feliz Navidad!</p>
@@ -39,14 +39,14 @@ export function Countdown() {
   )
 }
 
-function TimeBox({ label, value }: { label: string; value: number }) {
+function TimeNum({ label, value }: { label: string; value: number }) {
   const padded = value.toString().padStart(2, '0')
   return (
-    <div className="rounded-lg bg-white/10 border border-white/20 px-2 py-3">
-      <div className="text-3xl sm:text-4xl font-bold tabular-nums text-white" aria-hidden="true">
+    <div className="px-2 py-1">
+      <div className="text-4xl sm:text-5xl font-bold tabular-nums text-white" aria-hidden="true">
         {padded}
       </div>
-      <div className="text-xs uppercase tracking-wide text-white/75">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.18em] text-white/75">{label}</div>
     </div>
   )
 }

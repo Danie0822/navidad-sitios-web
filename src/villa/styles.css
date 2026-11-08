@@ -1,4 +1,7 @@
 /* Propósito: hoja de estilos global para Villa Navidad. Activa Tailwind v4 y reglas base de accesibilidad. */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/fraunces/600.css";
 @import "tailwindcss";
 
 html, body, #root {
@@ -31,17 +34,12 @@ body {
   --cta: #A72C36;
   --arch: #70232F;
   --gold: #E7B960;
+  --font-sans: "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-serif: "Fraunces Variable", "Fraunces", ui-serif, Georgia, serif;
 }
 
-/* Fuente Fraunces autohospedada (añadir archivo en public/fonts/Fraunces.woff2) */
-@font-face {
-  font-family: 'Fraunces';
-  src: url('/navidad-sitios-web/fonts/Fraunces.woff2') format('woff2'),
-       url('/fonts/Fraunces.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+/* Usar fuentes autohospedadas (fontsource) */
+body { font-family: var(--font-sans); }
 
 /* Animaciones de entrada */
 @keyframes fadeUp {

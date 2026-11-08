@@ -64,7 +64,7 @@ export function Snowfall() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none z-10"
+      className="fixed inset-0 pointer-events-none z-0"
     />
   )
 }

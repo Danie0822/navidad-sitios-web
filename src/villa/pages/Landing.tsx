@@ -1,7 +1,7 @@
 /* Propósito: landing navideña con diseño aprobado (copy grande y escena en arco), animaciones de entrada sutiles y contador. */
 import { Countdown } from '../components/Countdown'
 import { Snowfall } from '../components/Snowfall'
-import { ChristmasScene } from '../components/scene/ChristmasScene'
+import { ChristmasSceneScout } from '../components/scene/ChristmasSceneScout'
 import { IconArbol, IconRegalo } from '../icons/Navidad'
 import { Link } from 'react-router-dom'
 
@@ -10,7 +10,7 @@ export function Landing() {
     <div className="relative bg-[var(--bg-ivory)] text-[var(--forest)]">
       <Snowfall />
       <section className="pt-8 sm:pt-12">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-8 items-center">
+        <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-8 items-center">
           {/* Copy grande izquierda */}
           <div
             className="animate-[fadeUp_420ms_ease-out_forwards] opacity-0"
@@ -18,7 +18,7 @@ export function Landing() {
           >
             <p className="uppercase tracking-[0.18em] text-xs text-neutral-500">Un pequeño mundo para compartir</p>
             <h1 className="mt-3 text-[40px] leading-[1.05] sm:text-6xl font-extrabold"
-                style={{ fontFamily: '\'Fraunces\', ui-serif, Georgia, serif' }}>
+                style={{ fontFamily: '\'Fraunces Variable\', \'Fraunces\', ui-serif, Georgia, serif' }}>
               La magia<br/>está en dar.
             </h1>
             <p className="mt-3 text-neutral-700">Creá una tarjeta. Regalá un ratito de alegría.</p>
@@ -46,12 +46,8 @@ export function Landing() {
             style={{ animationFillMode: 'forwards' as const }}
           >
             <div className="relative">
-              <div className="mx-auto w-full max-w-[560px] aspect-[4/3] rounded-[36px] p-2" style={{ background: 'var(--arch)' }}>
-                <div className="w-full h-full rounded-[28px] bg-[#2b0d16] p-3">
-                  <div className="w-full h-full rounded-[200px] overflow-hidden bg-[#2b0d16]">
-                    <ChristmasScene />
-                  </div>
-                </div>
+              <div className="mx-auto w-full max-w-[560px] aspect-[600/620]">
+                <ChristmasSceneScout />
               </div>
               {/* estrella dorada de cierre */}
               <div
