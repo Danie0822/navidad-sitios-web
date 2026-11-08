@@ -117,37 +117,37 @@ export function ChristmasScene() {
             ))}
           </g>
 
-          {/* Árbol decorado */}
-          <g className="animate-[drift_18s_ease-in-out_infinite]" transform="translate(980, 440)">
-            <polygon points="0,0 -36,24 36,24" fill="url(#tree)" />
-            <polygon points="0,-28 -46,-4 46,-4" fill="url(#tree)" />
-            <polygon points="0,-56 -56,-32 56,-32" fill="url(#tree)" />
-            <rect x="-10" y="24" width="20" height="16" fill="#8B5E3C" />
+          {/* Árbol decorado (centrado-derecha, más grande) */}
+          <g className="animate-[drift_18s_ease-in-out_infinite]" transform="translate(860, 410)">
+            <polygon points="0,0 -48,34 48,34" fill="url(#tree)" />
+            <polygon points="0,-38 -62,-10 62,-10" fill="url(#tree)" />
+            <polygon points="0,-78 -76,-40 76,-40" fill="url(#tree)" />
+            <rect x="-12" y="34" width="24" height="18" fill="#8B5E3C" />
             {/* Bolas */}
-            {[-30, -10, 10, 28].map((px, i) => (
+            {[-42, -18, 12, 36].map((px, i) => (
               <circle
                 key={i}
                 cx={px}
-                cy={-20 - (i % 2) * 16}
-                r="5"
+                cy={-26 - (i % 2) * 18}
+                r="6"
                 fill={i % 2 === 0 ? '#F87171' : '#FBBF24'}
                 style={{ animation: `twinkle 1.8s ease-in-out ${i * 0.2}s infinite` }}
               />
             ))}
             {/* Estrella */}
-            <g transform="translate(0,-70)">
-              <polygon points="0,-8 3,-2 10,-2 4,2 6,8 0,4 -6,8 -4,2 -10,-2 -3,-2" fill="#FDE68A" />
+            <g transform="translate(0,-94)">
+              <polygon points="0,-10 4,-3 12,-3 5,3 7,11 0,6 -7,11 -5,3 -12,-3 -4,-3" fill="#FDE68A" />
             </g>
           </g>
 
-          {/* Regalos y trineo */}
-          <g className="animate-[drift_30s_linear_infinite]" transform="translate(160, 500)">
-            <rect x="0" y="0" width="34" height="26" rx="4" fill="#EF4444" />
-            <rect x="34" y="-6" width="28" height="20" rx="4" fill="#10B981" />
-            <path d="M-10 32 C 6 40, 38 40, 62 32" stroke="#C084FC" strokeWidth="3" fill="none" />
+          {/* Regalos y trineo (visible en primer plano, izquierda media) */}
+          <g className="animate-[drift_30s_linear_infinite]" transform="translate(260, 520)">
+            <rect x="0" y="0" width="36" height="26" rx="4" fill="#EF4444" />
+            <rect x="40" y="-6" width="30" height="20" rx="4" fill="#10B981" />
+            <path d="M-14 30 C 8 40, 52 40, 86 30" stroke="#C084FC" strokeWidth="3" fill="none" />
             {/* Trineo simple */}
-            <path d="M100 6 l40 0 l10 14 l-60 0 Z" fill="#9CA3AF" />
-            <path d="M96 20 C110 26, 134 26, 156 20" stroke="#9CA3AF" strokeWidth="4" fill="none" />
+            <path d="M120 6 l44 0 l12 14 l-68 0 Z" fill="#9CA3AF" />
+            <path d="M114 20 C130 26, 158 26, 182 20" stroke="#9CA3AF" strokeWidth="4" fill="none" />
           </g>
 
           {/* Suelo nieve */}

@@ -11,7 +11,7 @@ export function Landing() {
     <div className="relative">
       <Snowfall />
       <section className="pt-8 sm:pt-12 text-center">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-red-100 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-red-700 dark:text-red-200 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
           Villa Navidad
         </h1>
         <LightGarland />

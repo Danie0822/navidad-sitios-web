@@ -50,7 +50,7 @@ export default function App() {
         </Routes>
       </main>
       <footer className="mx-auto max-w-6xl px-4 sm:px-6 py-8 text-sm text-neutral-500 dark:text-neutral-400">
-        <p>Villa Navidad — proyecto navideño sin backend ni APIs pagadas.</p>
+        <p>Villa Navidad — ¡Felices Fiestas!</p>
       </footer>
     </div>
   )
