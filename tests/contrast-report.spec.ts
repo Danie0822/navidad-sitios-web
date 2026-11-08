@@ -45,7 +45,10 @@ test('reporte de contraste WCAG AA (RAW + resuelto + axe)', async ({ page }) => 
     try {
       // @ts-ignore
       if (!(await page.evaluate(() => (window as any).axe?.version))) {
-        await page.addScriptTag({ path: require.resolve('axe-core') })
+        // Inyectar la build de navegador de axe-core
+        // @ts-ignore
+        const axePath = require.resolve('axe-core/axe.min.js')
+        await page.addScriptTag({ path: axePath })
       }
     } catch {}
 
