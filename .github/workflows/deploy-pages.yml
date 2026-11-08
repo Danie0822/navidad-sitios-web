@@ -32,6 +32,8 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+      - name: SPA 404 fallback
+        run: cp dist/index.html dist/404.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
