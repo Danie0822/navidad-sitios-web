@@ -44,12 +44,13 @@ test('reporte de contraste WCAG AA (RAW + resuelto + axe)', async ({ page }) => 
     await page.waitForLoadState('domcontentloaded')
     try {
       // @ts-ignore
-      const hasAxe = await page.evaluate(() => Boolean((window as any).axe?.version))
+      let hasAxe = await page.evaluate(() => Boolean((window as any).axe?.version))
       if (!hasAxe) {
         // Inyectar axe-core como contenido para evitar problemas de ruta
         // @ts-ignore
         const axeSrc = require('node:fs').readFileSync(require.resolve('axe-core/axe.min.js'), 'utf-8')
         await page.addScriptTag({ content: axeSrc })
+        await page.waitForFunction(() => !!(window as any).axe?.version, { timeout: 2000 }).catch(() => {})
       }
     } catch {}
 
