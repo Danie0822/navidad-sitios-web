@@ -8,14 +8,14 @@ export default defineConfig({
   reporter: 'list',
   timeout: 30_000,
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5174',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'off',
   },
   webServer: {
-    command: 'npm run preview',
-    url: 'http://localhost:5173',
+    command: 'npm run preview:pages',
+    url: 'http://localhost:5174/navidad-sitios-web/',
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
     stderr: 'pipe',

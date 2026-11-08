@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 
 test('edición y descarga de tarjeta', async ({ page, context }, testInfo) => {
-  await page.goto('/tarjetas')
+  await page.goto('/navidad-sitios-web/tarjetas')
   await expect(page.getByRole('heading', { name: 'Tarjetas' })).toBeVisible()
   await page.getByLabel('Destinatario').fill('Daniel')
   await page.getByLabel('Mensaje').fill('¡Feliz Navidad! Muchas gracias por todo.')

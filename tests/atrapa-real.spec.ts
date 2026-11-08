@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test'
 
 test('atrapa regalos real: teclado y táctil, reset', async ({ page }) => {
-  await page.goto('/juegos#atrapa')
+  await page.goto('/navidad-sitios-web/juegos#atrapa')
   const canvas = page.locator('canvas[aria-label="Juego atrapar regalos"]')
   await canvas.waitFor()
   const score = () => page.locator('#atrapa').getByText(/Puntaje: \d+/)

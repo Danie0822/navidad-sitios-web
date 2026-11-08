@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import { PNG } from 'pngjs'
 
 test('tarjeta con texto largo exporta PNG no vacío y con variación de píxeles', async ({ page }) => {
-  await page.goto('/tarjetas')
+  await page.goto('/navidad-sitios-web/tarjetas')
   await page.getByLabel('Destinatario').fill('Familia Pérez-García y amistades queridas')
   // Mensaje largo (mayor que límites visuales para probar truncamiento sin cortes)
   await page.getByLabel('Mensaje').fill(

@@ -14,7 +14,7 @@ export function Snowfall() {
     let running = true
     const dpr = Math.max(1, window.devicePixelRatio || 1)
 
-    const flakes = createFlakes(80)
+    const flakes = createFlakes(40)
 
     function resize() {
       const { innerWidth: w, innerHeight: h } = window
@@ -27,7 +27,8 @@ export function Snowfall() {
     resize()
     window.addEventListener('resize', resize)
 
-    const last = { t: performance.now() }
+    const start = performance.now()
+    const last = { t: start }
     function frame(t: number) {
       if (!running) return
       const dt = Math.min(0.033, (t - last.t) / 1000)
@@ -41,6 +42,11 @@ export function Snowfall() {
           f.x = Math.random() * window.innerWidth
         }
         drawFlake(ctx, f.x, f.y, f.size)
+      }
+      // Una sola pasada corta (~4s)
+      if (t - start > 4000) {
+        running = false
+        return
       }
       animationFrameId = requestAnimationFrame(frame)
     }

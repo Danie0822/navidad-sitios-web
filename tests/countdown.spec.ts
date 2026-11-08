@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test'
 
 test('contador con fecha objetivo visible', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByRole('heading', { name: /Cuenta regresiva/i })).toBeVisible()
-  await expect(page.getByText(/Objetivo:/)).toBeVisible()
+  await page.goto('/navidad-sitios-web/')
+  await expect(page.getByText(/Cuenta regresiva a Navidad/i)).toBeVisible()
+  await expect(page.getByText(/Objetivo/)).toBeVisible()
 })

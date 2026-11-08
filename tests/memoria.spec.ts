@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test'
 
 test('memoria: bloqueo con dos cartas y reinicio', async ({ page }) => {
-  await page.goto('/juegos')
+  await page.goto('/navidad-sitios-web/juegos')
   const board = page.getByRole('grid', { name: /Tablero de memoria/ })
   await expect(board).toBeVisible()
   const cells = board.getByRole('gridcell')

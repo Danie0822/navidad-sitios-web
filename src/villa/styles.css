@@ -7,8 +7,10 @@ html, body, #root {
 
 body {
   margin: 0;
-  /* Tema claro/oscuro con buen contraste */
-  color-scheme: light dark;
+  /* Tema claro con paleta aprobada */
+  background: #F7F1E5; /* marfil */
+  color: #183C32;      /* verde bosque para texto primario */
+  color-scheme: light;
 }
 
 /* Foco visible consistente */
@@ -20,6 +22,35 @@ body {
 /* Utilidades específicas */
 .garland-bulb {
   box-shadow: 0 0 10px currentColor, 0 0 20px currentColor inset;
+}
+
+/* Tokens de color aprobados */
+:root {
+  --bg-ivory: #F7F1E5;
+  --forest: #183C32;
+  --cta: #A72C36;
+  --arch: #70232F;
+  --gold: #E7B960;
+}
+
+/* Fuente Fraunces autohospedada (añadir archivo en public/fonts/Fraunces.woff2) */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/navidad-sitios-web/fonts/Fraunces.woff2') format('woff2'),
+       url('/fonts/Fraunces.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Animaciones de entrada */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Motion reducido: desactivar animaciones decorativas por defecto */

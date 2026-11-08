@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test'
 
 test('atrapa regalos: suma de puntos en modo test', async ({ page }) => {
-  await page.goto('/juegos?test=1#atrapa')
+  await page.goto('/navidad-sitios-web/juegos?test=1#atrapa')
   const canvas = page.locator('canvas[aria-label="Juego atrapar regalos"]')
   await canvas.waitFor()
   // Mover puntero al centro antes del spawn para alinear con testMode
