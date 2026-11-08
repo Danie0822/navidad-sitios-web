@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "preview:pages": "node scripts/preview-pages.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -25,7 +26,9 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "autoprefixer": "^10.6.2",
+    "mime": "^4.1.2",
     "oxlint": "^1.90.0",
+    "pngjs": "^7.0.0",
     "postcss": "^8.5.32",
     "tailwindcss": "^4.3.5",
     "typescript": "~7.0.2",

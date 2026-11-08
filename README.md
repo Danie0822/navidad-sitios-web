@@ -28,6 +28,10 @@ Abre `http://localhost:5173` en tu navegador.
 npm run build
 npm run preview
 ```
+Para GitHub Pages (ruta base /navidad-sitios-web/):
+- El build de producción usa base '/navidad-sitios-web/' automáticamente.
+- SPA fallback incluido en `public/404.html` para recargas profundas.
+- Router usa `basename = import.meta.env.BASE_URL`.
 
 ## Estructura principal
 ```
@@ -84,6 +88,14 @@ src/villa/
 Tras ejecutar las pruebas en navegador, capturas de ejemplo han sido almacenadas en:
 - `/opt/cursor/artifacts/villa-navidad-desktop.png`
 - `/opt/cursor/artifacts/villa-navidad-mobile.png`
+
+## Publicación en GitHub Pages (pendiente de aprobación)
+- Workflow: `.github/workflows/deploy-pages.yml` (seguro, permisos mínimos).
+- Despliegue solo en `main`. No despliega PRs.
+- Pasos a activar por un admin, después del visto bueno:
+  1. En el repo: Settings → Pages → Build and deployment → Source: GitHub Actions.
+  2. Hacer merge a `main` cuando QA lo apruebe.
+- URL esperada tras activación: `https://<usuario>.github.io/navidad-sitios-web/`.
 
 ## Scripts
 - `npm run dev`: servidor de desarrollo

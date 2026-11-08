@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirigiendo…</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      // SPA fallback para GitHub Pages bajo /navidad-sitios-web/
+      (function() {
+        var l = window.location;
+        var base = '/navidad-sitios-web';
+        if (!l.pathname.startsWith(base)) {
+          // Si el sitio está en otra ruta, intentar redirigir a raíz
+          l.replace(base + '/');
+          return;
+        }
+        // Reescribe a index preservando la ruta como ?p=/ruta
+        var path = l.pathname.replace(base, '');
+        if (path === '' || path === '/') {
+          l.replace(base + '/');
+          return;
+        }
+        l.replace(base + '/?p=' + encodeURIComponent(path + l.search + l.hash));
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirigiendo…</p>
+  </body>
+  </html>
