@@ -1,13 +1,20 @@
-// Propósito: medir contraste WCAG AA en elementos clave y emitir una matriz reproducible.
-// - Captura RAW getComputedStyle (p. ej. oklch(), rgb(), color()) y compone alpha sobre fondo real.
-// - Usa conversión del navegador cuando es posible; si no convertible → BLOCKED con causa (nunca 0,0,0).
-// - Verificación cruzada con axe-core (sin telemetría) para color-contrast.
-// - Controles conocidos (21:1 y 1:1). Artefactos JSON/MD/ZIP y recorte de caption.
+// Propósito: medir contraste WCAG AA con evidencia fiable y reporte reproducible.
+// Requisitos cumplidos:
+// - axe-core como medición principal (violations/passes/incomplete/inapplicable). Si axe no está disponible, la prueba falla (no fallback verde).
+// - Captura RAW (getComputedStyle color + cadena de fondos) solo como datos y para ::placeholder.
+// - Fallback SOLO para ::placeholder con culori (OKLAB/OKLCH → sRGB) y composición alpha; si no convertible → BLOCKED con causa.
+// - Muestras estables (espera breve tras carga/estado).
+// - Gates: FAIL=0, INCOMPLETE=0, BLOCKED=0, y sin axe ERROR.
+// - Artefactos: JSON + Markdown + ZIP, y recorte del caption.
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 import { execSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+import * as culori from 'culori'
 
+const requireCjs = createRequire(import.meta.url)
 const ARTIFACT_DIR = '/opt/cursor/artifacts'
+
 const pages = [
   { url: '/navidad-sitios-web/', name: 'landing' },
   { url: '/navidad-sitios-web/tarjetas', name: 'tarjetas' },
@@ -23,36 +30,36 @@ type MatrixRow = {
   backgroundResolved?: string
   ratio?: number
   threshold?: number
-  result?: 'PASS' | 'FAIL' | 'BLOCKED'
+  result?: 'PASS' | 'FAIL' | 'INCOMPLETE' | 'INAPPLICABLE' | 'BLOCKED'
   blockedReason?: string
-  raw?: { color?: string; backgroundChain?: Array<{ selector: string; backgroundColor: string; opacity: string }> }
-  axe?: { status: 'PASS' | 'FAIL' | 'INAPPLICABLE' | 'ERROR'; details?: string }
+  raw?: {
+    color?: string
+    backgroundChain?: Array<{ selector: string; backgroundColor: string; opacity: string }>
+  }
+  axe?: { status: 'PASS' | 'FAIL' | 'INCOMPLETE' | 'INAPPLICABLE' | 'ERROR'; details?: string }
 }
 
 function ensureDir(p: string) {
-  try {
-    fs.mkdirSync(p, { recursive: true })
-  } catch {}
+  try { fs.mkdirSync(p, { recursive: true }) } catch {}
 }
 
-test('reporte de contraste WCAG AA (RAW + resuelto + axe)', async ({ page }) => {
+test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeholder)', async ({ page }) => {
   ensureDir(ARTIFACT_DIR)
   const matrix: MatrixRow[] = []
 
   for (const p of pages) {
     await page.goto(p.url)
     await page.waitForLoadState('domcontentloaded')
-    try {
-      // @ts-ignore
-      let hasAxe = await page.evaluate(() => Boolean((window as any).axe?.version))
-      if (!hasAxe) {
-        // Inyectar axe-core como contenido para evitar problemas de ruta
-        // @ts-ignore
-        const axeSrc = require('node:fs').readFileSync(require.resolve('axe-core/axe.min.js'), 'utf-8')
-        await page.addScriptTag({ content: axeSrc })
-        await page.waitForFunction(() => !!(window as any).axe?.version, { timeout: 2000 }).catch(() => {})
-      }
-    } catch {}
+    // Estabilizar animaciones breves antes de medir (evita opacidades transitorias)
+    await page.waitForTimeout(900)
+    // Inyectar axe-core (ESM): cargar bundle del paquete y exigir disponibilidad
+    const hasAxe = await page.evaluate(() => Boolean((window as any).axe?.version))
+    if (!hasAxe) {
+      const axePath = requireCjs.resolve('axe-core/axe.min.js')
+      const axeSrc = fs.readFileSync(axePath, 'utf-8')
+      await page.addScriptTag({ content: axeSrc })
+    }
+    await page.waitForFunction(() => !!(window as any).axe?.version, undefined, { timeout: 3000 })
 
     type Item = { sel: string; label: string; state?: MatrixRow['state'] }
     let items: Item[] = []
@@ -93,6 +100,7 @@ test('reporte de contraste WCAG AA (RAW + resuelto + axe)', async ({ page }) => 
         { sel: '#atrapa button:has-text("Reiniciar")', label: 'atrapa-reset', state: 'hover' },
         { sel: '#atrapa button:has-text("Reiniciar")', label: 'atrapa-reset', state: 'focus' },
       ]
+      // Estados visibles de memoria
       const grid = page.getByRole('grid', { name: /Tablero de memoria/ })
       await grid.waitFor()
       const cells = grid.getByRole('gridcell')
@@ -105,156 +113,165 @@ test('reporte de contraste WCAG AA (RAW + resuelto + axe)', async ({ page }) => 
     for (const it of items) {
       if (it.state === 'hover') await page.hover(it.sel).catch(() => {})
       if (it.state === 'focus') await page.focus(it.sel).catch(() => {})
+      await page.waitForTimeout(120)
+
       const handle = await page.$(it.sel)
       if (!handle) {
         matrix.push({
-          page: p.name,
-          label: it.label,
-          state: it.state ?? 'default',
-          selector: it.sel,
-          result: 'BLOCKED',
-          blockedReason: 'Selector no encontrado',
+          page: p.name, label: it.label, state: it.state ?? 'default', selector: it.sel,
+          result: 'BLOCKED', blockedReason: 'Selector no encontrado',
         })
         continue
       }
+
       if (p.name === 'landing' && it.label === 'countdown-caption' && (it.state ?? 'default') === 'default') {
-        try {
-          await handle.screenshot({ path: `${ARTIFACT_DIR}/caption-crop.png` })
-        } catch {}
+        try { await handle.screenshot({ path: `${ARTIFACT_DIR}/caption-crop.png` }) } catch {}
       }
-      const rec = await handle.evaluate(
-        async (el, state) => {
-          const result: any = { ok: true, blockedReason: null, raw: {}, resolved: {} }
-          function parseRgbFromAny(input: string): [number, number, number, number] | null {
-            const s = input.trim()
-            // Navegador como oráculo: normaliza a rgb(...) o rgba(...)
-            try {
-              const tmp = document.createElement('span')
-              tmp.style.color = s
-              document.body.appendChild(tmp)
-              const computed = getComputedStyle(tmp).color // esperado: rgb/rgba(...) con comas
-              tmp.remove()
-              const m = computed.match(/rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*([\d.]+))?\s*\)/i)
-              if (!m) return null
-              const r = parseFloat(m[1]), g = parseFloat(m[2]), b = parseFloat(m[3]), a = m[4] ? parseFloat(m[4]) : 1
-              return [r, g, b, a]
-            } catch {
-              return null
-            }
+
+      // RAW: color + cadena de fondos (para evidencia y ::placeholder)
+      const raw = await handle.evaluate((el, state) => {
+        function getRawComputed(e: Element, pseudo?: string) {
+          const cs = getComputedStyle(e, pseudo)
+          return { color: cs.color, backgroundColor: cs.backgroundColor, opacity: cs.opacity }
+        }
+        function bgChain(e: Element) {
+          const chain: Array<{ selector: string; backgroundColor: string; opacity: string }> = []
+          let cur: Element | null = e
+          while (cur && cur instanceof HTMLElement) {
+            const cs = getComputedStyle(cur)
+            chain.push({ selector: (cur as HTMLElement).tagName.toLowerCase() + (cur.id ? `#${cur.id}` : ''), backgroundColor: cs.backgroundColor, opacity: cs.opacity })
+            cur = cur.parentElement
           }
-          function srgbToLin(c: number) { c/=255; return c <= 0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4) }
-          function luminance([r,g,b]: [number,number,number]) { return 0.2126*srgbToLin(r)+0.7152*srgbToLin(g)+0.0722*srgbToLin(b) }
-          function over([r,g,b,a]: [number,number,number,number], [dr,dg,db,da]: [number,number,number,number]): [number,number,number,number] {
-            const outA = a + da*(1-a)
-            const outR = (r*a + dr*da*(1-a)) / (outA||1)
-            const outG = (g*a + dg*da*(1-a)) / (outA||1)
-            const outB = (b*a + db*da*(1-a)) / (outA||1)
-            return [outR,outG,outB,outA]
-          }
-          function getRawComputed(e: Element, pseudo?: string) {
-            const cs = getComputedStyle(e, pseudo)
-            return { color: cs.color, backgroundColor: cs.backgroundColor, opacity: cs.opacity }
-          }
-          function resolveBgChain(e: Element) {
-            const chain: Array<{ selector: string; backgroundColor: string; opacity: string }> = []
-            let cur: Element | null = e
-            while (cur && cur instanceof HTMLElement) {
-              const cs = getComputedStyle(cur)
-              chain.push({ selector: (cur as HTMLElement).tagName.toLowerCase() + (cur.id ? `#${cur.id}` : ''), backgroundColor: cs.backgroundColor, opacity: cs.opacity })
-              cur = cur.parentElement
-            }
-            const body = getComputedStyle(document.body)
-            chain.push({ selector: 'body', backgroundColor: body.backgroundColor, opacity: body.opacity })
-            return chain
-          }
-          const raw = state === 'placeholder' ? getRawComputed(el, '::placeholder') : getRawComputed(el)
-          const bgChain = resolveBgChain(el)
-          ;(result as any).raw = { color: raw.color, backgroundChain: bgChain }
-          const fg = parseRgbFromAny(raw.color)
-          if (!fg) { result.ok = false; result.blockedReason = `No convertible a sRGB: ${raw.color}`; return result }
-          let acc: [number,number,number,number] = [255,255,255,0]
-          for (const node of bgChain) {
-            const rgba = parseRgbFromAny(node.backgroundColor)
-            if (rgba && rgba[3] > 0) { acc = over(rgba, acc); if (acc[3] >= 1) break }
-          }
-          if (acc[3] < 1) {
-            const bodyBg = parseRgbFromAny(bgChain[bgChain.length-1]?.backgroundColor || 'rgb(255,255,255)') || [255,255,255,1]
-            acc = over(bodyBg, acc)
-          }
-          // Componer color de texto (que puede tener alpha) sobre el fondo efectivo opaco
-          const eff = over(fg as any, [acc[0], acc[1], acc[2], 1] as any)
-          const L1 = luminance([eff[0], eff[1], eff[2]] as any)
-          const L2 = luminance([acc[0], acc[1], acc[2]] as any)
-          const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05)
-          ;(result as any).resolved = {
-            foreground: `rgb(${Math.round(eff[0])},${Math.round(eff[1])},${Math.round(eff[2])})`,
-            background: `rgb(${Math.round(acc[0])},${Math.round(acc[1])},${Math.round(acc[2])})`,
-            ratio: parseFloat(ratio.toFixed(2)),
-          }
-          return result
-        },
-        it.state,
-      )
-      const axe = await page.evaluate(async (sel) => {
-        try {
-          // @ts-ignore
-          if (!(window as any).axe) return { status: 'ERROR', details: 'axe-core no inyectado' }
-          // @ts-ignore
-          const res = await (window as any).axe.run(document, { runOnly: { type: 'rule', values: ['color-contrast'] }, resultTypes: ['violations', 'passes'], include: [[sel]] })
-          const violated = res.violations?.find((v: any) => v.id === 'color-contrast')
-          if (violated && violated.nodes?.length) {
-            const n = violated.nodes[0]
-            const msg = (n.any?.[0]?.message || n.failureSummary || '').toString()
-            return { status: 'FAIL', details: msg.slice(0, 200) }
-          }
-          return { status: 'PASS' }
-        } catch (e: any) { return { status: 'ERROR', details: String(e?.message || e) } }
-      }, it.sel)
+          const body = getComputedStyle(document.body)
+          chain.push({ selector: 'body', backgroundColor: body.backgroundColor, opacity: body.opacity })
+          return chain
+        }
+        const base = state === 'placeholder' ? getRawComputed(el, '::placeholder') : getRawComputed(el)
+        return { base, chain: bgChain(el) }
+      }, it.state)
+
+      // axe-core medición principal en el propio elemento
+      const axeRes = await handle.evaluate(async (el) => {
+        const axe = (window as any).axe
+        if (!axe?.run) return { error: 'axe-core no inyectado' }
+        const res = await axe.run(el, { runOnly: { type: 'rule', values: ['color-contrast'] } })
+        return {
+          violations: res.violations?.filter((v: any) => v.id === 'color-contrast') ?? [],
+          passes: res.passes?.filter((v: any) => v.id === 'color-contrast') ?? [],
+          incomplete: res.incomplete?.filter((v: any) => v.id === 'color-contrast') ?? [],
+          inapplicable: res.inapplicable?.filter((v: any) => v.id === 'color-contrast') ?? [],
+        }
+      })
+
       const isLarge = /title|heading|hero-title/i.test(it.label)
       const threshold = isLarge ? 3.0 : 4.5
-      const row: MatrixRow = { page: p.name, label: it.label, state: it.state ?? 'default', selector: it.sel, axe: axe as any }
-      if (!rec || !rec.ok) {
-        row.result = 'BLOCKED'
-        row.blockedReason = rec?.blockedReason || 'Conversión no soportada'
-        row.raw = rec?.raw
-      } else {
-        row.foregroundResolved = rec.resolved.foreground
-        row.backgroundResolved = rec.resolved.background
-        row.ratio = rec.resolved.ratio
-        row.threshold = threshold
-        // Medición principal: axe-core cuando aplica
-        if ((axe as any)?.status === 'PASS' || (axe as any)?.status === 'FAIL') {
-          row.result = (axe as any).status
-        } else {
-          // Fallback: nuestra relación compuesta
-          row.result = rec.resolved.ratio >= threshold ? 'PASS' : 'FAIL'
-        }
-        row.raw = rec.raw
+      const row: MatrixRow = {
+        page: p.name, label: it.label, state: it.state ?? 'default', selector: it.sel,
+        raw: { color: raw.base.color, backgroundChain: raw.chain },
+        axe: (() => {
+          if ((axeRes as any)?.error) return { status: 'ERROR', details: (axeRes as any).error }
+          const v = (axeRes as any).violations.length
+          const inc = (axeRes as any).incomplete.length
+          const inap = (axeRes as any).inapplicable.length
+          const pass = (axeRes as any).passes.length
+          if (v > 0) return { status: 'FAIL', details: `violations:${v} incomplete:${inc} inapplicable:${inap} passes:${pass}` }
+          if (inc > 0) return { status: 'INCOMPLETE', details: `incomplete:${inc} inapplicable:${inap} passes:${pass}` }
+          if (pass > 0) return { status: 'PASS', details: `passes:${pass} inapplicable:${inap}` }
+          return { status: 'INAPPLICABLE', details: `inapplicable:${inap}` }
+        })(),
       }
+
+      // Resultado según axe
+      if (row.axe?.status === 'FAIL') row.result = 'FAIL'
+      else if (row.axe?.status === 'INCOMPLETE') row.result = 'INCOMPLETE'
+      else if (row.axe?.status === 'ERROR') row.result = 'BLOCKED'
+      else if (row.axe?.status === 'INAPPLICABLE') row.result = 'INAPPLICABLE'
+      else row.result = 'PASS'
+
+      // Solo ::placeholder usa fallback culori (OKLAB/OKLCH → sRGB + alpha)
+      if (it.state === 'placeholder') {
+        const toSrgb = (input: string) => {
+          const parsed = culori.parse(input)
+          if (!parsed) return null
+          const conv = culori.converter('srgb')(parsed) as any
+          if (!conv) return null
+          const c = culori.clampRgb(conv) as any
+          const a = typeof (parsed as any).alpha === 'number' ? (parsed as any).alpha : (typeof c.alpha === 'number' ? c.alpha : 1)
+          return [Math.round(c.r * 255), Math.round(c.g * 255), Math.round(c.b * 255), a] as [number, number, number, number]
+        }
+        const over = (src: [number,number,number,number], dst: [number,number,number,number]) => {
+          const [r,g,b,a] = src, [dr,dg,db,da] = dst
+          const outA = a + da*(1-a)
+          const outR = (r*a + dr*da*(1-a)) / (outA||1)
+          const outG = (g*a + dg*da*(1-a)) / (outA||1)
+          const outB = (b*a + db*da*(1-a)) / (outA||1)
+          return [outR,outG,outB,outA] as [number,number,number,number]
+        }
+        const fg = toSrgb(raw.base.color)
+        if (!fg) { row.result = 'BLOCKED'; row.blockedReason = `No convertible a sRGB: ${raw.base.color}` }
+        else {
+          let acc: [number,number,number,number] = [255,255,255,0]
+          for (const node of raw.chain) {
+            const bg = toSrgb(node.backgroundColor)
+            if (!bg) { row.result = 'BLOCKED'; row.blockedReason = `No convertible fondo: ${node.backgroundColor}`; break }
+            if (bg[3] > 0) { acc = over(bg, acc); if (acc[3] >= 1) break }
+          }
+          if (row.result !== 'BLOCKED') {
+            const eff = over(fg, [acc[0], acc[1], acc[2], 1])
+            const srgbToLin = (c: number) => { c/=255; return c <= 0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4) }
+            const L1 = 0.2126*srgbToLin(eff[0]) + 0.7152*srgbToLin(eff[1]) + 0.0722*srgbToLin(eff[2])
+            const L2 = 0.2126*srgbToLin(acc[0]) + 0.7152*srgbToLin(acc[1]) + 0.0722*srgbToLin(acc[2])
+            const ratio = (Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05)
+            row.foregroundResolved = `rgb(${Math.round(eff[0])},${Math.round(eff[1])},${Math.round(eff[2])})`
+            row.backgroundResolved = `rgb(${Math.round(acc[0])},${Math.round(acc[1])},${Math.round(acc[2])})`
+            row.ratio = parseFloat(ratio.toFixed(2))
+            row.threshold = threshold
+            row.result = ratio >= threshold ? 'PASS' : 'FAIL'
+          }
+        }
+      }
+
       matrix.push(row)
     }
   }
-  const invalidAllBlack = matrix.filter(r => r.foregroundResolved === 'rgb(0,0,0)' && r.backgroundResolved === 'rgb(0,0,0)' && r.ratio === 1).length
-  expect(invalidAllBlack).toBeLessThan(Math.max(1, Math.floor(matrix.length * 0.5)))
+
+  // Gates significativos: FAIL=0, INCOMPLETE=0, BLOCKED=0 y sin axe ERROR
+  const failCount = matrix.filter(r => r.result === 'FAIL').length
+  expect(failCount).toBe(0)
+  const incompleteCount = matrix.filter(r => r.result === 'INCOMPLETE').length
+  expect(incompleteCount).toBe(0)
   const blockedCount = matrix.filter(r => r.result === 'BLOCKED').length
+  expect(blockedCount).toBe(0)
+  const axeErrors = matrix.filter(r => r.axe?.status === 'ERROR').length
+  expect(axeErrors).toBe(0)
+
+  // Escribir artefactos
   fs.writeFileSync(`${ARTIFACT_DIR}/contrast-matrix.json`, JSON.stringify(matrix, null, 2))
-  const total = matrix.length, passes = matrix.filter(r=>r.result==='PASS').length, fails = matrix.filter(r=>r.result==='FAIL').length
-  let report = `# Reporte de contraste (WCAG AA)\n\nTotal: ${total} • PASS: ${passes} • FAIL: ${fails} • BLOCKED: ${blockedCount}\n\n`
-  report += `Metodología: getComputedStyle RAW, composición alpha sobre cadena de fondos hasta body (#F7F1E5), verificación cruzada con axe-core.\n\n`
-  report += `Límites: no se evalúan gradientes/imágenes; colores no convertibles → BLOCKED (nunca 0,0,0).\n\n`
-  const list = matrix.filter(r=>r.result!=='PASS').map(r=>`- ${r.page} • ${r.label} [${r.state}] → ${r.result}${r.result==='FAIL'?` (${r.ratio} vs ≥${r.threshold})`:r.blockedReason?` (${r.blockedReason})`:''}`).join('\n')
-  report += list || '- Sin fallos registrados bajo esta metodología.'
+  const total = matrix.length
+  const passes = matrix.filter((r) => r.result === 'PASS').length
+  const fails = matrix.filter((r) => r.result === 'FAIL').length
+  const incompletes = matrix.filter((r) => r.result === 'INCOMPLETE').length
+  const inapplicables = matrix.filter((r) => r.result === 'INAPPLICABLE').length
+  let report = `# Reporte de contraste (WCAG AA)\n\nTotal: ${total} • PASS: ${passes} • FAIL: ${fails} • INCOMPLETE: ${incompletes} • INAPPLICABLE: ${inapplicables}\n\n`
+  report += `Medición principal: axe-core (color-contrast) ejecutado sobre el elemento DOM. Ausencia de violation no implica PASS; se incluyen incomplete/inapplicable.\n\n`
+  report += `::placeholder: conversión OKLAB/OKLCH→sRGB (culori) y composición alpha; si no es convertible se marca BLOCKED con causa. No se evalúan fondos con imágenes/gradientes.\n\n`
+  const list = matrix.filter(r=>r.result!=='PASS').map(r=>`- ${r.page} • ${r.label} [${r.state}] → ${r.result}${r.result==='FAIL'&&r.ratio?` (${r.ratio} vs ≥${r.threshold})`:r.blockedReason?` (${r.blockedReason})`:''}`).join('\n')
+  report += list || '- Sin fallos registrados.'
   fs.writeFileSync(`${ARTIFACT_DIR}/contrast-report.md`, report)
+
   try {
-    execSync(`zip -q -j ${ARTIFACT_DIR}/villa-evidencia.zip ` +
-      `${ARTIFACT_DIR}/contrast-matrix.json ` +
-      `${ARTIFACT_DIR}/contrast-report.md ` +
-      `${ARTIFACT_DIR}/villa-navidad-early.png ` +
-      `${ARTIFACT_DIR}/villa-navidad-desktop.png ` +
-      `${ARTIFACT_DIR}/villa-navidad-mobile.png ` +
-      `${ARTIFACT_DIR}/villa-navidad-late.png ` +
-      `${ARTIFACT_DIR}/tarjeta-ejemplo.png ` +
-      `${ARTIFACT_DIR}/caption-crop.png`, { stdio: 'ignore' })
+    execSync(
+      `zip -q -j ${ARTIFACT_DIR}/villa-evidencia.zip ` +
+        `${ARTIFACT_DIR}/contrast-matrix.json ` +
+        `${ARTIFACT_DIR}/contrast-report.md ` +
+        `${ARTIFACT_DIR}/villa-navidad-early.png ` +
+        `${ARTIFACT_DIR}/villa-navidad-desktop.png ` +
+        `${ARTIFACT_DIR}/villa-navidad-mobile.png ` +
+        `${ARTIFACT_DIR}/villa-navidad-late.png ` +
+        `${ARTIFACT_DIR}/tarjeta-ejemplo.png ` +
+        `${ARTIFACT_DIR}/caption-crop.png`,
+      { stdio: 'ignore' },
+    )
   } catch {}
 })
 
