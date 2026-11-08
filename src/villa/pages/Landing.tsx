@@ -1,6 +1,6 @@
 /* Propósito: landing navideña con diseño aprobado (copy grande y escena en arco), animaciones de entrada sutiles y contador. */
 import { Countdown } from '../components/Countdown'
-import { Snowfall } from '../components/Snowfall'
+import { SnowfallBox } from '../components/Snowfall'
 import { ChristmasSceneScout } from '../components/scene/ChristmasSceneScout'
 import { IconArbol, IconRegalo } from '../icons/Navidad'
 import { Link } from 'react-router-dom'
@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom'
 export function Landing() {
   return (
     <div className="relative bg-[var(--bg-ivory)] text-[var(--forest)]">
-      <Snowfall />
       <section className="pt-8 sm:pt-12">
         <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 grid md:grid-cols-2 gap-8 items-center">
           {/* Copy grande izquierda */}
@@ -47,6 +46,11 @@ export function Landing() {
           >
             <div className="relative">
               <div className="mx-auto w-full max-w-[560px] aspect-[600/620]">
+                {/* Nieve confinada al arco mediante clip-path path del SVG */}
+                <SnowfallBox
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ clipPath: "path('M0 620 V288 A300 288 0 0 1 600 288 V620 Z')" }}
+                />
                 <ChristmasSceneScout />
               </div>
               {/* estrella dorada de cierre */}

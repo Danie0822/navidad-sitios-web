@@ -117,3 +117,94 @@ function usePrefersReducedMotion() {
   }, [mql])
   return ref.current
 }
+
+/* Propósito: nieve confinada a un contenedor. Dibuja dentro del rectángulo del contenedor y respeta reduced-motion. */
+export function SnowfallBox({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  const hostRef = useRef<HTMLDivElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const prefersReduced = usePrefersReducedMotion()
+
+  useEffect(() => {
+    const hostEl = hostRef.current
+    const cnv = canvasRef.current
+    if (!hostEl || !cnv || prefersReduced) return
+    const c = cnv
+    const ctx = c.getContext('2d') as CanvasRenderingContext2D
+    const dpr = Math.max(1, window.devicePixelRatio || 1)
+    let running = true
+    let animationFrameId = 0
+
+    function sizeFromHost() {
+      const rect = hostEl!.getBoundingClientRect()
+      c.width = Math.floor(rect.width * dpr)
+      c.height = Math.floor(rect.height * dpr)
+      c.style.width = `${rect.width}px`
+      c.style.height = `${rect.height}px`
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      return { w: rect.width, h: rect.height }
+    }
+
+    let { w, h } = sizeFromHost()
+    const flakes = createLocalFlakes(30, w, h)
+
+    const ro = new ResizeObserver(() => {
+      const s = sizeFromHost()
+      w = s.w
+      h = s.h
+    })
+    ro.observe(hostEl! as Element)
+
+    const start = performance.now()
+    const last = { t: start }
+    function frame(t: number) {
+      if (!running) return
+      const dt = Math.min(0.033, (t - last.t) / 1000)
+      last.t = t
+      ctx.clearRect(0, 0, c.width, c.height)
+      for (const f of flakes) {
+        f.y += f.speed * dt
+        f.x += Math.sin((t / 1000) * f.swingSpeed + f.seed) * f.swingAmp * dt
+        if (f.y > h + 8) {
+          f.y = -8
+          f.x = Math.random() * w
+        }
+        drawFlake(ctx, f.x, f.y, f.size)
+      }
+      if (t - start > 4000) {
+        running = false
+        return
+      }
+      animationFrameId = requestAnimationFrame(frame)
+    }
+    animationFrameId = requestAnimationFrame(frame)
+
+    return () => {
+      running = false
+      cancelAnimationFrame(animationFrameId)
+      ro.disconnect()
+    }
+  }, [prefersReduced])
+
+  if (prefersReduced) return <div ref={hostRef} className={className} style={style} aria-hidden="true" />
+  return (
+    <div ref={hostRef} className={className} style={style} aria-hidden="true">
+      <canvas ref={canvasRef} className="snow-canvas pointer-events-none" />
+    </div>
+  )
+}
+
+function createLocalFlakes(n: number, w: number, h: number): Flake[] {
+  const flakes: Flake[] = []
+  for (let i = 0; i < n; i++) {
+    flakes.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: 1 + Math.random() * 2.5,
+      speed: 30 + Math.random() * 45,
+      swingAmp: 20 + Math.random() * 30,
+      swingSpeed: 1 + Math.random() * 2,
+      seed: Math.random() * Math.PI * 2,
+    })
+  }
+  return flakes
+}
