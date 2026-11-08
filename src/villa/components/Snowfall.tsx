@@ -14,7 +14,7 @@ export function Snowfall() {
     let running = true
     const dpr = Math.max(1, window.devicePixelRatio || 1)
 
-    const flakes = createFlakes(120)
+    const flakes = createFlakes(80)
 
     function resize() {
       const { innerWidth: w, innerHeight: h } = window

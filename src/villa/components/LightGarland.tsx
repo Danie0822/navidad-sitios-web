@@ -7,24 +7,29 @@ export function LightGarland() {
     'text-sky-400',
     'text-fuchsia-400',
   ]
-  const bulbs = Array.from({ length: 24 })
+  const bulbs = Array.from({ length: 28 })
   return (
     <div className="w-full flex justify-center mt-4" aria-hidden="true">
-      <div className="relative w-full max-w-4xl h-12">
-        <div className="absolute inset-x-0 top-4 h-0.5 bg-green-800/50 rounded-full"></div>
-        <ul className="absolute inset-0 flex items-end justify-between px-1">
+      <div className="relative w-full max-w-4xl h-14">
+        <svg className="absolute inset-x-0 top-6 w-full h-2" viewBox="0 0 100 4" preserveAspectRatio="none">
+          <path d="M0 2 C 25 0, 75 4, 100 2" stroke="#14532d" strokeWidth="0.8" fill="none" />
+        </svg>
+        <ul className="absolute inset-0 flex items-end justify-between px-2">
           {bulbs.map((_, i) => {
             const color = colors[i % colors.length]
             const delay = (i % 6) * 0.15
+            const y = 2 + Math.sin((i / bulbs.length) * Math.PI) * 6
             return (
               <li
                 key={i}
-                className={`garland-bulb ${color}`}
+                className={`relative garland-bulb ${color}`}
                 style={{
                   animation: `twinkle 1.8s ease-in-out ${delay}s infinite`,
+                  transform: `translateY(${y}px)`,
                 }}
               >
-                <span className="block w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full translate-y-4"></span>
+                <span className="block w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full translate-y-5"></span>
+                <span className="absolute left-1/2 -translate-x-1/2 top-4 block w-1.5 h-2 bg-neutral-700 rounded-t-sm"></span>
               </li>
             )
           })}
