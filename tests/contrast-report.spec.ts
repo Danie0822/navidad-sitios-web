@@ -149,18 +149,22 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
         return { base, chain: bgChain(el) }
       }, it.state)
 
-      // axe-core medición principal en el propio elemento
-      const axeRes = await handle.evaluate(async (el) => {
+      // axe-core medición principal en el propio elemento (ejecutar en MAIN world)
+      const axeRes = await page.evaluate(async (el: Element) => {
         const axe = (window as any).axe
         if (!axe?.run) return { error: 'axe-core no inyectado' }
-        const res = await axe.run(el, { runOnly: { type: 'rule', values: ['color-contrast'] } })
-        return {
-          violations: res.violations?.filter((v: any) => v.id === 'color-contrast') ?? [],
-          passes: res.passes?.filter((v: any) => v.id === 'color-contrast') ?? [],
-          incomplete: res.incomplete?.filter((v: any) => v.id === 'color-contrast') ?? [],
-          inapplicable: res.inapplicable?.filter((v: any) => v.id === 'color-contrast') ?? [],
+        try {
+          const res = await axe.run(el, { runOnly: { type: 'rule', values: ['color-contrast'] } })
+          return {
+            violations: res.violations?.filter((v: any) => v.id === 'color-contrast') ?? [],
+            passes: res.passes?.filter((v: any) => v.id === 'color-contrast') ?? [],
+            incomplete: res.incomplete?.filter((v: any) => v.id === 'color-contrast') ?? [],
+            inapplicable: res.inapplicable?.filter((v: any) => v.id === 'color-contrast') ?? [],
+          }
+        } catch (e: any) {
+          return { error: String(e && e.stack ? e.stack : e) }
         }
-      })
+      }, handle)
 
       const isLarge = /title|heading|hero-title/i.test(it.label)
       const threshold = isLarge ? 3.0 : 4.5
@@ -197,17 +201,7 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
     }
   }
 
-  // Gates significativos: FAIL=0, INCOMPLETE=0, BLOCKED=0 y sin axe ERROR
-  const failCount = matrix.filter(r => r.result === 'FAIL').length
-  expect(failCount).toBe(0)
-  const incompleteCount = matrix.filter(r => r.result === 'INCOMPLETE').length
-  expect(incompleteCount).toBe(0)
-  const blockedCount = matrix.filter(r => r.result === 'BLOCKED').length
-  expect(blockedCount).toBe(0)
-  const axeErrors = matrix.filter(r => r.axe?.status === 'ERROR').length
-  expect(axeErrors).toBe(0)
-
-  // Escribir artefactos
+  // Escribir artefactos ANTES de gates para conservar evidencia aun si fallan
   fs.writeFileSync(`${ARTIFACT_DIR}/contrast-matrix.json`, JSON.stringify(matrix, null, 2))
   const total = matrix.length
   const passes = matrix.filter((r) => r.result === 'PASS').length
@@ -235,6 +229,16 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
       { stdio: 'ignore' },
     )
   } catch {}
+
+  // Gates significativos: FAIL=0, INCOMPLETE=0, BLOCKED=0 y sin axe ERROR
+  const failCount = matrix.filter(r => r.result === 'FAIL').length
+  expect(failCount).toBe(0)
+  const incompleteCount = matrix.filter(r => r.result === 'INCOMPLETE').length
+  expect(incompleteCount).toBe(0)
+  const blockedCount = matrix.filter(r => r.result === 'BLOCKED').length
+  expect(blockedCount).toBe(0)
+  const axeErrors = matrix.filter(r => r.axe?.status === 'ERROR').length
+  expect(axeErrors).toBe(0)
 })
 
 test('controles conocidos: #fff/#000 = 21:1 y mismo color = 1:1', async ({ page }) => {
