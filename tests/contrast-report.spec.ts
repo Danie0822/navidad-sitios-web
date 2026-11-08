@@ -176,11 +176,13 @@ test('reporte de contraste WCAG AA (RAW + resuelto + axe)', async ({ page }) => 
             const bodyBg = parseRgbFromAny(bgChain[bgChain.length-1]?.backgroundColor || 'rgb(255,255,255)') || [255,255,255,1]
             acc = over(bodyBg, acc)
           }
-          const L1 = luminance([fg[0], fg[1], fg[2]] as any)
+          // Componer color de texto (que puede tener alpha) sobre el fondo efectivo opaco
+          const eff = over(fg as any, [acc[0], acc[1], acc[2], 1] as any)
+          const L1 = luminance([eff[0], eff[1], eff[2]] as any)
           const L2 = luminance([acc[0], acc[1], acc[2]] as any)
-          const ratio = (Math.max(L1,L2)+0.05) / (Math.min(L1,L2)+0.05)
+          const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05)
           ;(result as any).resolved = {
-            foreground: `rgb(${Math.round(fg[0])},${Math.round(fg[1])},${Math.round(fg[2])})`,
+            foreground: `rgb(${Math.round(eff[0])},${Math.round(eff[1])},${Math.round(eff[2])})`,
             background: `rgb(${Math.round(acc[0])},${Math.round(acc[1])},${Math.round(acc[2])})`,
             ratio: parseFloat(ratio.toFixed(2)),
           }
@@ -254,8 +256,11 @@ test('controles conocidos: #fff/#000 = 21:1 y mismo color = 1:1', async ({ page 
     function srgbToLin(c: number){ c/=255; return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4) }
     function lum([r,g,b]: [number,number,number]){ return 0.2126*srgbToLin(r)+0.7152*srgbToLin(g)+0.0722*srgbToLin(b) }
     function ratio(fg: string, bg: string){
-      const f = parseRgb(getComputedStyle(Object.assign(document.createElement('div'),{style:{color:fg}})).color)
-      const b = parseRgb(getComputedStyle(Object.assign(document.createElement('div'),{style:{color:bg}})).color)
+      const n1 = document.createElement('div'); n1.style.color = fg; document.body.appendChild(n1)
+      const n2 = document.createElement('div'); n2.style.color = bg; document.body.appendChild(n2)
+      const f = parseRgb(getComputedStyle(n1).color)
+      const b = parseRgb(getComputedStyle(n2).color)
+      n1.remove(); n2.remove()
       const L1 = lum([f[0],f[1],f[2]]), L2 = lum([b[0],b[1],b[2]])
       return (Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05)
     }
