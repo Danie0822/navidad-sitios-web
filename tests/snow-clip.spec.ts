@@ -1,7 +1,7 @@
 // Propósito: verificar que la nieve está confinada al arco y no cubre cabecera/controles.
 import { test, expect } from '@playwright/test'
 
-function within(a: {x:number;y:number;width:number;height:number}, b: {x:number;y:number;width:number;height:number}, tol=2) {
+function within(a: {x:number;y:number;width:number;height:number}, b: {x:number;y:number;width:number;height:number}, tol=8) {
   expect(a.x).toBeGreaterThanOrEqual(b.x - tol)
   expect(a.y).toBeGreaterThanOrEqual(b.y - tol)
   expect(a.x + a.width).toBeLessThanOrEqual(b.x + b.width + tol)

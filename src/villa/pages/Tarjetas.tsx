@@ -1,14 +1,13 @@
-/* Propósito: página de edición y descarga de tarjetas navideñas. */
+/* Propósito: taller de tarjetas Scout V2. */
 import { CardEditor } from '../components/cards/CardEditor'
+import { FocusHeading } from '../components/FocusHeading'
 
 export function Tarjetas() {
   return (
     <section aria-labelledby="heading-tarjetas">
-      <h2 id="heading-tarjetas" className="text-3xl font-bold text-red-700 dark:text-red-300">Tarjetas</h2>
-      <p className="mt-1 text-neutral-600 dark:text-neutral-400">
-        Edita y descarga tu tarjeta como imagen PNG sin dependencias externas frágiles.
-      </p>
-      <div className="mt-6">
+      <FocusHeading id="heading-tarjetas">Un poquito de vos, en una tarjeta.</FocusHeading>
+      <p className="mt-3 text-[var(--muted)]">Elegí un diseño, escribí algo lindo y llevátelo en PNG.</p>
+      <div className="mt-8">
         <CardEditor />
       </div>
     </section>

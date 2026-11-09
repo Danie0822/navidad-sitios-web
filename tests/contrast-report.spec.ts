@@ -2,13 +2,12 @@
 // Requisitos cumplidos:
 // - axe-core como medición principal (violations/passes/incomplete/inapplicable). Si axe no está disponible, la prueba falla (no fallback verde).
 // - Captura RAW (getComputedStyle color + cadena de fondos) solo como datos y para ::placeholder.
-// - Fallback SOLO para ::placeholder con culori (OKLAB/OKLCH → sRGB) y composición alpha; si no convertible → BLOCKED con causa.
+// - ::placeholder: axe lo marca INAPPLICABLE (no es PASS). Medición aparte por composición alpha en placeholder-contrast.spec.ts. No se usa culori.
 // - Muestras estables (espera breve tras carga/estado).
 // - Gates: FAIL=0, INCOMPLETE=0, BLOCKED=0, y sin axe ERROR.
 // - Artefactos: JSON + Markdown + ZIP, y recorte del caption.
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
-import { execSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 
 const requireCjs = createRequire(import.meta.url)
@@ -18,6 +17,8 @@ const pages = [
   { url: '/navidad-sitios-web/', name: 'landing' },
   { url: '/navidad-sitios-web/tarjetas', name: 'tarjetas' },
   { url: '/navidad-sitios-web/juegos', name: 'juegos' },
+  { url: '/navidad-sitios-web/juegos/memoria', name: 'memoria' },
+  { url: '/navidad-sitios-web/juegos/regalos', name: 'regalos' },
 ]
 
 type MatrixRow = {
@@ -42,7 +43,7 @@ function ensureDir(p: string) {
   try { fs.mkdirSync(p, { recursive: true }) } catch {}
 }
 
-test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeholder)', async ({ page }) => {
+test('reporte de contraste WCAG AA (axe-core principal; placeholder INAPPLICABLE y alpha aparte)', async ({ page }) => {
   ensureDir(ARTIFACT_DIR)
   const matrix: MatrixRow[] = []
 
@@ -77,38 +78,48 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
       ]
     } else if (p.name === 'tarjetas') {
       items = [
-        { sel: 'h2:has-text("Tarjetas")', label: 'heading' },
-        { sel: 'label:has-text("Destinatario")', label: 'label-dest' },
-        { sel: 'label:has-text("Mensaje")', label: 'label-msg' },
-        { sel: 'select#plantilla', label: 'select' },
-        { sel: 'button:has-text("Descargar imagen")', label: 'download' },
+        { sel: 'h1', label: 'heading' },
+        { sel: 'label:has-text("Para")', label: 'label-dest' },
+        { sel: 'label:has-text("Tu mensaje")', label: 'label-msg' },
+        { sel: 'button[aria-pressed="true"]', label: 'template-selected' },
+        { sel: 'button:has-text("Descargar PNG")', label: 'download' },
         { sel: '#dest', label: 'input-dest', state: 'placeholder' },
         { sel: '#msg', label: 'input-msg', state: 'placeholder' },
         { sel: '#dest', label: 'input-dest', state: 'focus' },
         { sel: '#msg', label: 'input-msg', state: 'focus' },
       ]
-    } else {
+    } else if (p.name === 'juegos') {
       items = [
-        { sel: 'h2:has-text("Juegos")', label: 'heading' },
-        { sel: 'h3:has-text("Memoria navideña")', label: 'memoria-title' },
-        { sel: '#memoria >> text=/Puntaje:/', label: 'memoria-score' },
-        { sel: 'h3:has-text("Atrapa regalos")', label: 'atrapa-title' },
-        { sel: '#atrapa >> text=/Puntaje:/', label: 'atrapa-score' },
-        { sel: '#memoria button[role="gridcell"]', label: 'mem-card-focus', state: 'focus' },
-        { sel: '#atrapa button:has-text("Reiniciar")', label: 'atrapa-reset', state: 'default' },
-        { sel: '#atrapa button:has-text("Reiniciar")', label: 'atrapa-reset', state: 'hover' },
-        { sel: '#atrapa button:has-text("Reiniciar")', label: 'atrapa-reset', state: 'focus' },
+        { sel: 'h1', label: 'heading' },
+        { sel: '#catalog-memoria .btn-cta', label: 'cta-memoria' },
+        { sel: '#catalog-regalos .btn-cta', label: 'cta-regalos' },
+        { sel: 'h2:has-text("Memoria")', label: 'memoria-title' },
+        { sel: 'h2:has-text("Regalos escondidos")', label: 'regalos-title' },
       ]
-      // Estados visibles de memoria
+    } else if (p.name === 'memoria') {
+      items = [
+        { sel: 'h1', label: 'heading' },
+        { sel: 'a:has-text("Volver a juegos")', label: 'back' },
+        { sel: 'text=/Parejas/', label: 'memoria-score' },
+        { sel: 'button:has-text("Reiniciar")', label: 'mem-reset' },
+        { sel: 'button:has-text("Pausar")', label: 'mem-pause' },
+        { sel: '[role="gridcell"]', label: 'mem-card-focus', state: 'focus' },
+      ]
       const grid = page.getByRole('grid', { name: /Tablero de memoria/ })
       await grid.waitFor()
       const cells = grid.getByRole('gridcell')
-      // Abrir una carta (estado seleccionado/abierto) y mantenerla abierta (no seleccionar la segunda)
       await cells.nth(0).click().catch(() => {})
-      // Asegurar que quedó abierta antes de medir
-      await page.locator('#memoria button[role="gridcell"][aria-pressed="true"]').first().waitFor({ timeout: 2000 }).catch(() => {})
-      items.push({ sel: '#memoria button[role="gridcell"][aria-pressed="true"]', label: 'mem-card-open' })
-      items.push({ sel: '#memoria button[role="gridcell"][aria-pressed="false"]', label: 'mem-card-closed' })
+      await page.locator('[role="gridcell"][data-open="true"]').first().waitFor({ timeout: 2000 }).catch(() => {})
+      items.push({ sel: '[role="gridcell"][data-open="true"]', label: 'mem-card-open' })
+      items.push({ sel: '[role="gridcell"][data-open="false"]', label: 'mem-card-closed' })
+    } else {
+      items = [
+        { sel: 'h1', label: 'heading' },
+        { sel: 'a:has-text("Volver a juegos")', label: 'back' },
+        { sel: 'button:has-text("Jugar")', label: 'play' },
+        { sel: 'button:has-text("Jugar")', label: 'play', state: 'hover' },
+        { sel: 'button:has-text("Jugar")', label: 'play', state: 'focus' },
+      ]
     }
 
     for (const it of items) {
@@ -212,25 +223,10 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
   const inapplicables = matrix.filter((r) => r.result === 'INAPPLICABLE').length
   let report = `# Reporte de contraste (WCAG AA)\n\nTotal: ${total} • PASS: ${passes} • FAIL: ${fails} • INCOMPLETE: ${incompletes} • INAPPLICABLE: ${inapplicables}\n\n`
   report += `Medición principal: axe-core (color-contrast) ejecutado sobre el elemento DOM. Ausencia de violation no implica PASS; se incluyen incomplete/inapplicable.\n\n`
-  report += `::placeholder: conversión OKLAB/OKLCH→sRGB (culori) y composición alpha; si no es convertible se marca BLOCKED con causa. No se evalúan fondos con imágenes/gradientes.\n\n`
+  report += `::placeholder: axe-core lo marca INAPPLICABLE (no se cuenta como PASS). La relación ≥4.5 se mide aparte por composición alpha sobre el fondo del campo en tests/placeholder-contrast.spec.ts. No se usa culori ni conversión OKLCH en este reporte.\n\n`
   const list = matrix.filter(r=>r.result!=='PASS').map(r=>`- ${r.page} • ${r.label} [${r.state}] → ${r.result}${r.result==='FAIL'&&r.ratio?` (${r.ratio} vs ≥${r.threshold})`:r.blockedReason?` (${r.blockedReason})`:''}`).join('\n')
   report += list || '- Sin fallos registrados.'
   fs.writeFileSync(`${ARTIFACT_DIR}/contrast-report.md`, report)
-
-  try {
-    execSync(
-      `zip -q -j ${ARTIFACT_DIR}/villa-evidencia.zip ` +
-        `${ARTIFACT_DIR}/contrast-matrix.json ` +
-        `${ARTIFACT_DIR}/contrast-report.md ` +
-        `${ARTIFACT_DIR}/villa-navidad-early.png ` +
-        `${ARTIFACT_DIR}/villa-navidad-desktop.png ` +
-        `${ARTIFACT_DIR}/villa-navidad-mobile.png ` +
-        `${ARTIFACT_DIR}/villa-navidad-late.png ` +
-        `${ARTIFACT_DIR}/tarjeta-ejemplo.png ` +
-        `${ARTIFACT_DIR}/caption-crop.png`,
-      { stdio: 'ignore' },
-    )
-  } catch {}
 
   // Gates significativos: FAIL=0, INCOMPLETE=0, BLOCKED=0 y sin axe ERROR
   const failCount = matrix.filter(r => r.result === 'FAIL').length

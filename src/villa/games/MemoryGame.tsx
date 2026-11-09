@@ -1,137 +1,196 @@
-/* Propósito: minijuego de memoria de parejas navideñas con puntaje y reinicio. */
+/* Propósito: memoria 8 siluetas × 2 IDs, máximo dos pendientes, pausa y teclado. */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type React from 'react'
-import { IconArbol, IconCampana, IconCopos, IconEstrella, IconRegalo } from '../icons/Navidad'
+import { MEMORY_SYMBOLS, DorsoEstrella, type MemorySymbolId } from '../icons/Silhouettes'
+import { shuffle } from '../utils/shuffle'
+import { useMotion } from '../motion/MotionContext'
 
-type CardKind = 'arbol' | 'regalo' | 'campana' | 'copo' | 'estrella' | 'arbol2' | 'regalo2' | 'estrella2'
-type Card = { id: number; kind: CardKind; matched: boolean }
+type MemoryCard = { uid: number; symbol: MemorySymbolId }
 
-const ICONS: Record<CardKind, React.ReactNode> = {
-  arbol: <IconArbol className="w-7 h-7" aria-hidden="true" />,
-  arbol2: <IconArbol className="w-7 h-7" aria-hidden="true" />,
-  regalo: <IconRegalo className="w-7 h-7" aria-hidden="true" />,
-  regalo2: <IconRegalo className="w-7 h-7" aria-hidden="true" />,
-  campana: <IconCampana className="w-7 h-7" aria-hidden="true" />,
-  copo: <IconCopos className="w-7 h-7" aria-hidden="true" />,
-  estrella: <IconEstrella className="w-7 h-7" aria-hidden="true" />,
-  estrella2: <IconEstrella className="w-7 h-7" aria-hidden="true" />,
-}
-
-function makeDeck(): Card[] {
-  const kinds: CardKind[] = ['arbol', 'regalo', 'campana', 'copo', 'estrella', 'arbol2', 'regalo2', 'estrella2']
-  const deck: Card[] = []
-  let id = 1
-  for (const k of kinds) {
-    deck.push({ id: id++, kind: k, matched: false })
-    deck.push({ id: id++, kind: k, matched: false })
-  }
-  // Mezclar
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[deck[i], deck[j]] = [deck[j], deck[i]]
-  }
-  return deck
+function makeDeck(): MemoryCard[] {
+  const pairs = MEMORY_SYMBOLS.flatMap((s) => [
+    { uid: 0, symbol: s.id },
+    { uid: 0, symbol: s.id },
+  ])
+  const shuffled = shuffle(pairs)
+  return shuffled.map((c, i) => ({ ...c, uid: i + 1 }))
 }
 
 export function MemoryGame() {
-  const [deck, setDeck] = useState<Card[]>(() => makeDeck())
-  const [selected, setSelected] = useState<number[]>([])
+  const { paused, hidden, togglePaused, reduced } = useMotion()
+  const frozen = paused || hidden
+  const [deck, setDeck] = useState<MemoryCard[]>(() => makeDeck())
+  const [open, setOpen] = useState<number[]>([])
+  const [matched, setMatched] = useState<Set<MemorySymbolId>>(() => new Set())
+  const [pairs, setPairs] = useState(0)
+  const [attempts, setAttempts] = useState(0)
   const [lock, setLock] = useState(false)
-  const [score, setScore] = useState(0)
-  const timeoutRef = useRef<number | null>(null)
+  const closeTimer = useRef<number | null>(null)
+  const remainMs = useRef(0)
+  const pendingClose = useRef<number[] | null>(null)
 
-  const finished = useMemo(() => deck.every((c) => c.matched), [deck])
+  const finished = pairs === 8
+  const frozenRef = useRef(frozen)
+  frozenRef.current = frozen
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
+      if (closeTimer.current) window.clearTimeout(closeTimer.current)
     }
   }, [])
 
-  function reset() {
-    if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
-    timeoutRef.current = null
-    setDeck(makeDeck())
-    setSelected([])
-    setLock(false)
-    setScore(0)
+  useEffect(() => {
+    if (frozen) {
+      if (closeTimer.current) {
+        window.clearTimeout(closeTimer.current)
+        closeTimer.current = null
+      }
+      return
+    }
+    if (pendingClose.current) {
+      const ids = pendingClose.current
+      closeTimer.current = window.setTimeout(() => {
+        setOpen((cur) => (cur[0] === ids[0] && cur[1] === ids[1] ? [] : cur))
+        setLock(false)
+        pendingClose.current = null
+      }, remainMs.current || 800)
+    }
+  }, [frozen])
+
+  function clearTimers() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current)
+    closeTimer.current = null
+    pendingClose.current = null
+    remainMs.current = 0
   }
 
-  function onCardClick(idx: number) {
+  function reset() {
+    clearTimers()
+    setDeck(makeDeck())
+    setOpen([])
+    setMatched(new Set())
+    setPairs(0)
+    setAttempts(0)
+    setLock(false)
+  }
+
+  function onCard(idx: number) {
+    if (frozen || finished) return
     if (lock) return
     const card = deck[idx]
-    if (card.matched) return
-    if (selected.includes(idx)) return // no usar dos veces la misma carta
+    if (matched.has(card.symbol)) return
+    if (open.includes(idx)) return
+    if (open.length >= 2) return
 
-    const next = [...selected, idx]
-    setSelected(next)
-    if (next.length === 2) {
-      setLock(true)
-      const [a, b] = next
-      if (deck[a].kind === deck[b].kind && a !== b) {
-        // match válido
-        setDeck((d) => {
-          const n = d.slice()
-          n[a] = { ...n[a], matched: true }
-          n[b] = { ...n[b], matched: true }
-          return n
-        })
-        setScore((s) => s + 10)
-        setSelected([])
+    const next = [...open, idx]
+    setOpen(next)
+    if (next.length < 2) return
+
+    setLock(true)
+    setAttempts((n) => n + 1)
+    const [a, b] = next
+    if (deck[a].symbol === deck[b].symbol && a !== b) {
+      const symbol = deck[a].symbol
+      setMatched((s) => new Set(s).add(symbol))
+      setPairs((n) => n + 1)
+      setOpen([])
+      setLock(false)
+    } else {
+      pendingClose.current = next
+      remainMs.current = 800
+      closeTimer.current = window.setTimeout(() => {
+        if (frozenRef.current) return
+        setOpen([])
         setLock(false)
-      } else {
-        // volteo tras un pequeño lapso
-        timeoutRef.current = window.setTimeout(() => {
-          setSelected([])
-          setLock(false)
-        }, 800)
-      }
+        pendingClose.current = null
+      }, 800)
     }
   }
 
+  const live = useMemo(() => {
+    if (finished) return `¡Ocho parejas, una Navidad! ${attempts} intentos.`
+    if (frozen) return 'Partida pausada'
+    return `Parejas ${pairs} de 8. ${attempts} intentos.`
+  }, [finished, frozen, pairs, attempts])
+
   return (
-    <section aria-labelledby="heading-memoria">
-      <div className="flex items-center justify-between gap-3">
-        <h3 id="heading-memoria" className="text-2xl font-semibold">Memoria navideña</h3>
-        <div className="flex items-center gap-4">
-          <span className="text-sm">Puntaje: <strong>{score}</strong></span>
-          <button
-            type="button"
-            onClick={reset}
-            className="rounded-md border px-3 py-1.5 focus:outline-none focus-visible:ring-2 ring-neutral-400"
-          >
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="tabular-nums">
+          Parejas {pairs}/8 · Intentos {attempts}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className="btn-ghost" onClick={togglePaused} aria-pressed={paused}>
+            {paused ? 'Continuar' : 'Pausar'}
+          </button>
+          <button type="button" className="btn-ghost" onClick={reset}>
             Reiniciar
           </button>
         </div>
       </div>
-      <div
-        className="mt-4 grid grid-cols-4 sm:grid-cols-6 gap-3 sm:gap-4"
-        role="grid"
-        aria-label="Tablero de memoria"
-      >
+      {frozen && !finished && (
+        <p className="mt-3 text-sm" role="status">
+          Partida pausada
+        </p>
+      )}
+      <div className="sr-only" aria-live="polite">
+        {live}
+      </div>
+
+      <div className="mt-5 memory-grid" role="grid" aria-label="Tablero de memoria">
         {deck.map((card, idx) => {
-          const isOpen = selected.includes(idx) || card.matched
+          const isMatched = matched.has(card.symbol)
+          const isOpen = isMatched || open.includes(idx)
+          const meta = MEMORY_SYMBOLS.find((s) => s.id === card.symbol)!
+          const Icon = meta.Icon
           return (
             <button
-              key={card.id}
+              key={card.uid}
               type="button"
               role="gridcell"
+              data-symbol={card.symbol}
+              data-open={isOpen ? 'true' : 'false'}
+              data-matched={isMatched ? 'true' : 'false'}
               aria-pressed={isOpen}
-              aria-label={isOpen ? 'Abierta' : 'Cerrada'}
-              onClick={() => onCardClick(idx)}
-              className={`aspect-square rounded-lg border select-none focus:outline-none focus-visible:ring-2 ring-red-400
-                ${isOpen ? 'bg-white dark:bg-neutral-800 border-emerald-300 dark:border-emerald-700' : 'bg-red-100 dark:bg-neutral-800 border-red-200 dark:border-neutral-700'}
-              `}
-              disabled={lock && !isOpen && selected.length === 2}
+              aria-label={isOpen ? `Carta ${idx + 1}, ${meta.label}` : `Carta ${idx + 1}, boca abajo`}
+              disabled={frozen || (lock && !isOpen)}
+              onClick={() => onCard(idx)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onCard(idx)
+                }
+              }}
+              className={`memory-cell ${isMatched ? 'memory-hit' : ''}`}
             >
-              <div className="flex items-center justify-center h-full text-red-700 dark:text-red-300">
-                {isOpen ? ICONS[card.kind] : <span className="sr-only">Carta cerrada</span>}
+              <div className="memory-face" style={reduced ? { transform: isOpen ? 'rotateY(180deg)' : 'none', transition: 'none' } : undefined}>
+                <div className="memory-front">
+                  <DorsoEstrella className="w-8 h-8" />
+                </div>
+                <div className="memory-back">
+                  <Icon className="w-[72%] h-[72%]" />
+                </div>
               </div>
             </button>
           )
         })}
       </div>
-      {finished && <p className="mt-3 text-emerald-700 dark:text-emerald-300">¡Completado! Pulsa Reiniciar para jugar de nuevo.</p>}
-    </section>
+
+      {finished && (
+        <div className="mt-8 motion-on" role="status">
+          <p className="font-serif text-2xl">¡Ocho parejas, una Navidad!</p>
+          <p className="mt-1 tabular-nums">{attempts} intentos.</p>
+          <div className="flex gap-6 mt-2 anim-win" aria-hidden="true">
+            <span>★</span>
+            <span>★</span>
+            <span>★</span>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button type="button" className="btn-cta" onClick={reset}>
+              Jugar de nuevo
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
