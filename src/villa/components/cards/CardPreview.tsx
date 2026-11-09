@@ -52,18 +52,16 @@ export const CardPreview = forwardRef<HTMLDivElement, CardArtProps>(function Car
       {plantilla === 'bosque' && <BosqueArt />}
       {plantilla === 'regalos' && <RegalosArt />}
       {showText && (
-        <div
-          className={`absolute inset-0 pointer-events-none ${
-            plantilla === 'regalos' ? 'card-copy-regalos' : 'card-copy-center'
-          }`}
-        >
+        <div className="card-copy">
           <p className="card-title font-serif">{titleNode}</p>
-          <p className="card-dest" data-fit="dest">
-            {destLine}
-          </p>
-          <p className="card-msg" data-fit="msg">
-            {msg || (mode === 'preview' ? 'Escribí un deseo. Los saltos de línea también viajan.' : '')}
-          </p>
+          <div className="card-safe" data-safe-area>
+            <p className="card-dest" data-fit="dest">
+              {destLine}
+            </p>
+            <p className="card-msg" data-fit="msg">
+              {msg || (mode === 'preview' ? 'Escribí un deseo. Los saltos de línea también viajan.' : '')}
+            </p>
+          </div>
         </div>
       )}
     </div>

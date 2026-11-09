@@ -260,53 +260,84 @@ h2 { font-size: clamp(1.5rem, 2.4vw, 2.25rem); line-height: 1.15; }
   overflow: hidden;
   pointer-events: none;
 }
-.card-copy-center {
+.card-copy {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--bg-ivory);
+}
+.card-art[data-template="bosque"] .card-copy { color: var(--forest); }
+.card-title {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  top: 160px;
+  margin: 0;
+  font-size: 96px;
+  line-height: 1.05;
+  text-align: center;
+}
+.card-art[data-template="bosque"] .card-title {
+  top: 248px;
+  font-size: 86px;
+}
+.card-art[data-template="regalos"] .card-title {
+  left: 90px;
+  right: auto;
+  width: 670px;
+  top: 200px;
+  font-size: 88px;
+  text-align: left;
+}
+.card-safe {
+  position: absolute;
+  left: 150px;
+  width: 780px;
+  top: 272px;
+  height: 488px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 168px 150px 0;
-  color: var(--bg-ivory);
+  overflow: visible;
 }
-.card-art[data-template="bosque"] .card-copy-center {
-  color: var(--forest);
-  padding: 248px 150px 0;
+.card-art[data-template="bosque"] .card-safe {
+  left: 150px;
+  width: 780px;
+  top: 380px;
+  height: 440px;
 }
-.card-copy-regalos {
-  padding: 210px 90px 0;
-  max-width: 760px;
-  color: var(--bg-ivory);
+.card-art[data-template="regalos"] .card-safe {
+  left: 90px;
+  width: 670px;
+  top: 420px;
+  height: 300px;
+  align-items: flex-start;
   text-align: left;
 }
-.card-title {
-  font-size: 96px;
-  line-height: 1.05;
-  margin: 0;
-  max-width: 100%;
-}
-.card-art[data-template="bosque"] .card-title { font-size: 86px; }
-.card-art[data-template="regalos"] .card-title { font-size: 88px; }
 .card-dest {
-  margin: 40px 0 0;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   font-size: 48px;
   line-height: 1.2;
   color: #EBDDC8;
-  max-width: 100%;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
 .card-art[data-template="bosque"] .card-dest { color: var(--forest); }
 .card-msg {
-  margin: 32px 0 0;
+  margin: 28px 0 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   font-size: 46px;
   line-height: 1.35;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
-  max-width: 100%;
 }
-.card-art[data-template="regalos"] .card-dest,
-.card-art[data-template="regalos"] .card-msg { max-width: 670px; }
 
 .memory-grid {
   display: grid;

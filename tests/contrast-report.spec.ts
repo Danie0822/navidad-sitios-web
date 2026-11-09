@@ -2,7 +2,7 @@
 // Requisitos cumplidos:
 // - axe-core como medición principal (violations/passes/incomplete/inapplicable). Si axe no está disponible, la prueba falla (no fallback verde).
 // - Captura RAW (getComputedStyle color + cadena de fondos) solo como datos y para ::placeholder.
-// - Fallback SOLO para ::placeholder con culori (OKLAB/OKLCH → sRGB) y composición alpha; si no convertible → BLOCKED con causa.
+// - ::placeholder: axe lo marca INAPPLICABLE (no es PASS). Medición aparte por composición alpha en placeholder-contrast.spec.ts. No se usa culori.
 // - Muestras estables (espera breve tras carga/estado).
 // - Gates: FAIL=0, INCOMPLETE=0, BLOCKED=0, y sin axe ERROR.
 // - Artefactos: JSON + Markdown + ZIP, y recorte del caption.
@@ -43,7 +43,7 @@ function ensureDir(p: string) {
   try { fs.mkdirSync(p, { recursive: true }) } catch {}
 }
 
-test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeholder)', async ({ page }) => {
+test('reporte de contraste WCAG AA (axe-core principal; placeholder INAPPLICABLE y alpha aparte)', async ({ page }) => {
   ensureDir(ARTIFACT_DIR)
   const matrix: MatrixRow[] = []
 
@@ -223,7 +223,7 @@ test('reporte de contraste WCAG AA (axe-core principal, RAW/culori para ::placeh
   const inapplicables = matrix.filter((r) => r.result === 'INAPPLICABLE').length
   let report = `# Reporte de contraste (WCAG AA)\n\nTotal: ${total} • PASS: ${passes} • FAIL: ${fails} • INCOMPLETE: ${incompletes} • INAPPLICABLE: ${inapplicables}\n\n`
   report += `Medición principal: axe-core (color-contrast) ejecutado sobre el elemento DOM. Ausencia de violation no implica PASS; se incluyen incomplete/inapplicable.\n\n`
-  report += `::placeholder: conversión OKLAB/OKLCH→sRGB (culori) y composición alpha; si no es convertible se marca BLOCKED con causa. No se evalúan fondos con imágenes/gradientes.\n\n`
+  report += `::placeholder: axe-core lo marca INAPPLICABLE (no se cuenta como PASS). La relación ≥4.5 se mide aparte por composición alpha sobre el fondo del campo en tests/placeholder-contrast.spec.ts. No se usa culori ni conversión OKLCH en este reporte.\n\n`
   const list = matrix.filter(r=>r.result!=='PASS').map(r=>`- ${r.page} • ${r.label} [${r.state}] → ${r.result}${r.result==='FAIL'&&r.ratio?` (${r.ratio} vs ≥${r.threshold})`:r.blockedReason?` (${r.blockedReason})`:''}`).join('\n')
   report += list || '- Sin fallos registrados.'
   fs.writeFileSync(`${ARTIFACT_DIR}/contrast-report.md`, report)

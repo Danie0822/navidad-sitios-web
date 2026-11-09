@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { toPng } from 'html-to-image'
 import { CardPreview, TEMPLATES, type CardData, type CardTemplate } from './CardPreview'
 import { PauseButton, useMotion } from '../../motion/MotionContext'
+import { cardTextOverflows } from '../../utils/cardFit'
 
 const GUIDE_DEST = 40
 const GUIDE_MSG = 200
@@ -20,7 +21,6 @@ export function CardEditor() {
   const [error, setError] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
   const [overflow, setOverflow] = useState(false)
-  const previewRef = useRef<HTMLDivElement | null>(null)
   const exportRef = useRef<HTMLDivElement | null>(null)
   const { freeze } = useMotion()
   const previewFrozen = freeze || editing
@@ -34,15 +34,17 @@ export function CardEditor() {
   useEffect(() => {
     const node = exportRef.current
     if (!node) return
-    const dest = node.querySelector('[data-fit="dest"]') as HTMLElement | null
-    const msg = node.querySelector('[data-fit="msg"]') as HTMLElement | null
-    const over = [dest, msg].some((el) => {
-      if (!el) return false
-      const lh = parseFloat(getComputedStyle(el).lineHeight) || 62
-      const maxLines = el.dataset.fit === 'dest' ? 2 : 8
-      return el.scrollHeight > lh * maxLines + 2
-    })
-    setOverflow(over)
+    let cancelled = false
+    const check = async () => {
+      await document.fonts?.ready
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+      if (cancelled || !exportRef.current) return
+      setOverflow(cardTextOverflows(exportRef.current))
+    }
+    void check()
+    return () => {
+      cancelled = true
+    }
   }, [data])
 
   const missing = !data.destinatario.trim() || !data.mensaje.trim()
@@ -52,10 +54,15 @@ export function CardEditor() {
   async function handleExport() {
     setError(null)
     const node = exportRef.current
-    if (!node || !canDownload) return
+    if (!node || missing || exporting) return
+    await document.fonts?.ready
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+    if (cardTextOverflows(node)) {
+      setOverflow(true)
+      return
+    }
     try {
       setExporting(true)
-      await document.fonts?.ready
       const dataUrl = await toPng(node, {
         cacheBust: true,
         pixelRatio: 1,
@@ -89,7 +96,9 @@ export function CardEditor() {
 
   let reason = ''
   if (missing) reason = 'Escribí destinatario y mensaje para descargar.'
-  else if (overflow) reason = 'El texto no entra en el área segura. Acortá una línea o un salto; no borramos nada.'
+  else if (overflow)
+    reason =
+      'El texto no entra en el área segura de esta plantilla. Conservamos lo que escribiste; acortá o cambiá de diseño para descargar.'
   else if (exporting) reason = 'Preparando PNG…'
 
   return (
@@ -185,10 +194,9 @@ export function CardEditor() {
             <p className="font-medium">Vista previa</p>
             <PauseButton labelPlay="Pausar animación" labelPause="Continuar animación" />
           </div>
-          <ScaledPreview paused={previewFrozen}>
+          <ScaledPreview paused={previewFrozen} fits={!overflow}>
             <CardPreview
               key={data.plantilla}
-              ref={previewRef}
               destinatario={data.destinatario}
               mensaje={data.mensaje}
               plantilla={data.plantilla}
@@ -216,7 +224,11 @@ export function CardEditor() {
           >
             {exporting ? 'Preparando PNG…' : 'Descargar PNG'}
           </button>
-          <p id="download-help" className="text-sm text-[var(--muted)] max-w-[320px]">
+          <p
+            id="download-help"
+            role={overflow ? 'status' : undefined}
+            className={`text-sm max-w-[320px] ${overflow ? 'text-[var(--forest)] font-medium' : 'text-[var(--muted)]'}`}
+          >
             {reason || 'Descarga solo la tarjeta, sin chrome ni animación.'}
           </p>
           {error && (
@@ -243,7 +255,15 @@ export function CardEditor() {
   )
 }
 
-function ScaledPreview({ children, paused }: { children: ReactNode; paused: boolean }) {
+function ScaledPreview({
+  children,
+  paused,
+  fits,
+}: {
+  children: ReactNode
+  paused: boolean
+  fits: boolean
+}) {
   const box = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState(0.47)
   useEffect(() => {
@@ -261,6 +281,7 @@ function ScaledPreview({ children, paused }: { children: ReactNode; paused: bool
       className="card-preview-frame mx-auto"
       data-motion={paused ? 'paused' : 'play'}
       data-preview="live"
+      data-fits={fits ? 'true' : 'false'}
     >
       <div style={{ width: 1080, height: 1080, zoom }}>{children}</div>
     </div>

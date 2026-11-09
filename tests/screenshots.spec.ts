@@ -65,7 +65,8 @@ test('capturas de todas las rutas (desktop y móvil)', async ({ page }) => {
   }
 })
 
-test('fotogramas de teatro del regalo', async ({ page }) => {
+test('fotogramas de teatro del regalo (ciclo 8s)', async ({ page }) => {
+  test.setTimeout(20_000)
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.goto('/navidad-sitios-web/')
@@ -75,4 +76,8 @@ test('fotogramas de teatro del regalo', async ({ page }) => {
   await page.screenshot({ path: `${ART}/v2-teatro-1200ms.png` })
   await page.waitForTimeout(2400)
   await page.screenshot({ path: `${ART}/v2-teatro-3600ms.png` })
+  await page.waitForTimeout(2400)
+  await page.screenshot({ path: `${ART}/v2-teatro-6000ms.png` })
+  await page.waitForTimeout(2000)
+  await page.screenshot({ path: `${ART}/v2-teatro-8000ms.png` })
 })
