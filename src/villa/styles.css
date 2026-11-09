@@ -22,6 +22,14 @@ body {
   outline-offset: 2px;
 }
 
+/* Placeholders de tarjetas: el color heredado al 50% sobre blanco queda ~2.85:1.
+   Se oscurece sólo el pseudo-elemento, mismo verde bosque, opacidad ≥0.82. */
+#dest::placeholder,
+#msg::placeholder {
+  color: rgba(24, 60, 50, 0.82);
+  opacity: 1;
+}
+
 /* Utilidades específicas */
 .garland-bulb {
   box-shadow: 0 0 10px currentColor, 0 0 20px currentColor inset;
