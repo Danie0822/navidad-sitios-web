@@ -65,12 +65,12 @@ async function main() {
   }
   console.log('OK grep: 0 style="", 0 <style>, 0 script inline, 0 CDN Tailwind');
 
-  const ctaLight = contrastRatio("#183c32", "#f7f1e5");
+  const ctaLight = contrastRatio("#a72c36", "#f7f1e5");
   if (ctaLight < 4.5) {
     console.error("FAIL contraste CTA claro:", ctaLight.toFixed(3));
     process.exit(1);
   }
-  console.log("OK contraste CTA #183c32/#f7f1e5 =", ctaLight.toFixed(3));
+  console.log("OK contraste CTA #a72c36/#f7f1e5 =", ctaLight.toFixed(3));
 
   const server = spawn("node", ["scripts/preview-pages.mjs"], {
     cwd: root,
@@ -166,7 +166,7 @@ async function main() {
           report.push("tarjetas: Descargar PNG debería estar disabled vacío");
         }
         const disabledBg = await page.locator("#download-png").evaluate((el) => getComputedStyle(el).backgroundColor);
-        if (disabledBg === "rgb(24, 60, 50)") {
+        if (disabledBg === "rgb(167, 44, 54)") {
           failed = true;
           report.push(`tarjetas: disabled se ve como CTA activo (${disabledBg})`);
         } else {
