@@ -3,11 +3,7 @@
 (function (global) {
   "use strict";
 
-  /**
-   * Estado del contador para un instante dado.
-   * El 25/12 completo muestra Feliz Navidad; desde el 26 se apunta al año siguiente.
-   */
-  /** Calcula días/horas/min/seg hasta el próximo 25/12 (o Feliz Navidad ese día). */
+  /** Cuenta regresiva a Navidad: días/horas/min/seg (el 25/12 muestra Feliz Navidad). */
   function getCountdownState(now) {
     var y = now.getFullYear();
     var month = now.getMonth();

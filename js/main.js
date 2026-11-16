@@ -65,7 +65,7 @@
     });
   }
 
-  /** Contador regresivo a la próxima Navidad (25/dic; todo el 25 muestra Feliz Navidad). */
+  /** Cuenta regresiva a Navidad: actualiza el panel cada segundo. */
   function initCountdown() {
     var root = document.getElementById("countdown");
     if (!root) return;

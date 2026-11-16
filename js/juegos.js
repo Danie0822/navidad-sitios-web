@@ -86,7 +86,7 @@
     );
   }
 
-  /** Tablero de memoria: voltear, emparejar, pausar y reiniciar. */
+  /** Juego de memoria: voltear cartas, emparejar, pausar y reiniciar. */
   function initMemory() {
     var board = document.getElementById("memory-board");
     if (!board) return;
@@ -237,7 +237,7 @@
     reset();
   }
 
-  /** Juego de regalos escondidos: ventanas, temporizador y puntaje. */
+  /** Juego de regalos escondidos: ventanas, reloj y puntaje. */
   function initGifts() {
     var board = document.getElementById("gifts-board");
     if (!board) return;

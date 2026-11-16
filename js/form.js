@@ -121,8 +121,8 @@
     }
   }
 
-  /** Genera y descarga el PNG 1080×1080 de la tarjeta. */
-  async function handleExport() {
+  /** Genera y descarga la tarjeta PNG 1080×1080. */
+  async function downloadCardPng() {
     var d = data();
     var missing = !d.destinatario.trim() || !d.mensaje.trim();
     if (missing || exporting) {
@@ -225,11 +225,11 @@
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    void handleExport();
+    void downloadCardPng();
   });
   if (downloadBtn) {
     downloadBtn.addEventListener("click", function () {
-      void handleExport();
+      void downloadCardPng();
     });
   }
 
