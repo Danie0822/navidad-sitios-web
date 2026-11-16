@@ -34,8 +34,8 @@
 :root {
   --bg-ivory: #f7f1e5;
   --forest: #183c32;
-  --cta: #a72c36;
-  --arch: #70232f;
+  --cta: #183c32;
+  --arch: #183c32;
   --gold: #e7b960;
   --snow: #fffaf0;
   --surface: #ede4d4;
@@ -49,22 +49,6 @@
   --page-pad: clamp(16px, 4vw, 64px);
   --radius-card: 16px;
   --header-h: 64px;
-}
-
-/* Modo oscuro persistente (clase en html) */
-html.dark {
-  --bg-ivory: #14241f;
-  --forest: #f0e6d4;
-  /* #e07078 sobre #14241f ≈ 5.19:1 (WCAG AA ≥ 4.5) */
-  --cta: #e07078;
-  --arch: #8a3a45;
-  --gold: #e7b960;
-  --snow: #1c2e28;
-  --surface: #1e322b;
-  --line: #3a4f47;
-  --muted: #b7c2bc;
-  --cream: #2a3f37;
-  color-scheme: dark;
 }
 
 /* Modelo de caja global + bloque demostrativo (#box-demo) */
@@ -440,11 +424,6 @@ hr {
   padding: 1rem 1.25rem;
 }
 
-html.dark .countdown-panel {
-  background: #0d1a16;
-  border: 1px solid var(--line);
-}
-
 .countdown-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -500,10 +479,6 @@ html.dark .countdown-panel {
 .field::placeholder {
   color: rgba(24, 60, 50, 0.82);
   opacity: 1;
-}
-
-html.dark .field::placeholder {
-  color: rgba(240, 230, 212, 0.7);
 }
 
 .field-error {
@@ -1077,7 +1052,7 @@ ol {
 }
 
 .window-inner {
-  background: #9e4c46;
+  background: #183c32;
   border-radius: 6px;
   min-height: 56px;
   height: 100%;
@@ -1096,7 +1071,7 @@ ol {
   top: 0;
   bottom: 0;
   width: 50%;
-  background: #9e4c46;
+  background: #183c32;
   transition: transform 240ms var(--ease-out);
 }
 

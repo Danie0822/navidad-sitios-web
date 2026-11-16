@@ -1,7 +1,7 @@
 # Villa Navidad — HTML + CSS + JS (estático)
 
 Sitio educativo en **HTML, CSS y JavaScript puros**, con **Tailwind CSS compilado por CLI** (sin CDN).  
-Diseño editorial aprobado: paleta marfil / verde bosque / granate, arco, tipografía Fraunces + Inter, animaciones suaves.
+Diseño editorial aprobado: paleta marfil / verde bosque / oro, arco, tipografía Fraunces + Inter, animaciones suaves.
 
 Publicable en GitHub Pages bajo `/navidad-sitios-web/`.
 

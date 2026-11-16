@@ -65,12 +65,12 @@ async function main() {
   }
   console.log('OK grep: 0 style="", 0 <style>, 0 script inline, 0 CDN Tailwind');
 
-  const ctaDark = contrastRatio("#e07078", "#14241f");
-  if (ctaDark < 4.5) {
-    console.error("FAIL contraste CTA oscuro:", ctaDark.toFixed(3));
+  const ctaLight = contrastRatio("#183c32", "#f7f1e5");
+  if (ctaLight < 4.5) {
+    console.error("FAIL contraste CTA claro:", ctaLight.toFixed(3));
     process.exit(1);
   }
-  console.log("OK contraste CTA oscuro #e07078/#14241f =", ctaDark.toFixed(3));
+  console.log("OK contraste CTA #183c32/#f7f1e5 =", ctaLight.toFixed(3));
 
   const server = spawn("node", ["scripts/preview-pages.mjs"], {
     cwd: root,
@@ -87,18 +87,22 @@ async function main() {
   const report = [];
 
   try {
-    // prefers-dark sin valor en localStorage → aria-pressed true
+    // Siempre modo claro, aunque el SO prefiera oscuro; sin toggle de tema
     {
       const ctx = await browser.newContext({ colorScheme: "dark" });
       const page = await ctx.newPage();
       await page.goto(origin + "/", { waitUntil: "networkidle" });
-      const aria = await page.locator("#theme-toggle").getAttribute("aria-pressed");
       const dark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
-      if (!dark || aria !== "true") {
+      const toggleCount = await page.locator("#theme-toggle").count();
+      const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+      if (dark || toggleCount !== 0) {
         failed = true;
-        report.push(`prefers-dark: aria-pressed=${aria} dark=${dark}`);
+        report.push(`prefers-dark: dark=${dark} toggle=${toggleCount}`);
+      } else if (bg !== "rgb(247, 241, 229)") {
+        failed = true;
+        report.push(`prefers-dark: body bg=${bg}, esperado ivory`);
       } else {
-        report.push("prefers-dark: aria-pressed=true OK");
+        report.push("prefers-dark: sigue claro, sin toggle OK");
       }
       await ctx.close();
     }
@@ -154,22 +158,6 @@ async function main() {
         report.push(`${path}: Escape no devolvió foco al botón (focus=${focusBack})`);
       }
 
-      // Modo oscuro + persistencia
-      await page.locator("#theme-toggle").click();
-      const isDark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
-      const stored = await page.evaluate(() => localStorage.getItem("villa-navidad-theme"));
-      if (!isDark || stored !== "dark") {
-        failed = true;
-        report.push(`${path}: modo oscuro no persistió`);
-      }
-      await page.reload({ waitUntil: "networkidle" });
-      const stillDark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
-      if (!stillDark) {
-        failed = true;
-        report.push(`${path}: modo oscuro no sobrevivió al reload`);
-      }
-      await page.locator("#theme-toggle").click();
-
       if (path.includes("tarjetas")) {
         await page.setViewportSize({ width: 1280, height: 900 });
         const disabled = await page.locator("#download-png").isDisabled();
@@ -178,7 +166,7 @@ async function main() {
           report.push("tarjetas: Descargar PNG debería estar disabled vacío");
         }
         const disabledBg = await page.locator("#download-png").evaluate((el) => getComputedStyle(el).backgroundColor);
-        if (disabledBg === "rgb(167, 44, 54)") {
+        if (disabledBg === "rgb(24, 60, 50)") {
           failed = true;
           report.push(`tarjetas: disabled se ve como CTA activo (${disabledBg})`);
         } else {

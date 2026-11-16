@@ -1,9 +1,8 @@
-/* Propósito: menú hamburguesa, modo oscuro persistente y cuenta regresiva a Navidad. */
+/* Propósito: menú hamburguesa, foco del H1 y cuenta regresiva a Navidad. */
 
 (function () {
   "use strict";
 
-  initDarkMode();
   initMenu();
   initFocusHeading();
   initCountdown();
@@ -27,41 +26,6 @@
         target.focus({ preventScroll: true });
       } catch (err2) {
         target.focus();
-      }
-    }
-  }
-
-  /** Aplica y guarda el tema claro/oscuro en localStorage. */
-  function initDarkMode() {
-    var root = document.documentElement;
-    var key = "villa-navidad-theme";
-    var btn = document.getElementById("theme-toggle");
-    var saved = localStorage.getItem(key);
-    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var theme = saved || (prefersDark ? "dark" : "light");
-
-    applyTheme(theme);
-
-    if (!btn) return;
-
-    btn.addEventListener("click", function () {
-      var next = root.classList.contains("dark") ? "light" : "dark";
-      applyTheme(next);
-      localStorage.setItem(key, next);
-    });
-
-    function applyTheme(mode) {
-      if (mode === "dark") {
-        root.classList.add("dark");
-      } else {
-        root.classList.remove("dark");
-      }
-      if (btn) {
-        btn.setAttribute("aria-pressed", mode === "dark" ? "true" : "false");
-        btn.setAttribute(
-          "aria-label",
-          mode === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"
-        );
       }
     }
   }
