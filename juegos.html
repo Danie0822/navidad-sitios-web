@@ -1,4 +1,4 @@
-<!-- Propósito: catálogo de juegos y galería multimedia con video y audio libres. -->
+<!-- Propósito: minijuegos jugables — memoria de parejas y regalos escondidos, con audio discreto. -->
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -44,98 +44,98 @@
 
     <main class="page-shell py-8 sm:py-10">
       <section aria-labelledby="heading-juegos">
-        <h1 id="heading-juegos">Jugá un ratito.</h1>
-        <p class="lead">Dos juegos. Toda la magia.</p>
-
-        <div class="game-cards mt-8">
-          <article class="game-card">
-            <img src="./img/ambiente.jpg" alt="Ilustración sugerida para el juego Memoria" width="640" height="360">
-            <div class="game-card-body">
-              <h2>Memoria</h2>
-              <p>Encontrá las ocho parejas.</p>
-              <p>
-                <small>Versión estática: ideas del juego original de la villa.</small>
-              </p>
-              <ol>
-                <li>Dá vuelta dos cartas.</li>
-                <li>Si coinciden, suman pareja.</li>
-                <li>Completá las ocho.</li>
-              </ol>
-              <a class="btn-cta mt-4" href="./tarjetas.html">Ir al taller mientras tanto</a>
-            </div>
-          </article>
-
-          <article class="game-card">
-            <img src="./img/regalos.jpg" alt="Ilustración sugerida para Regalos escondidos" width="640" height="360">
-            <div class="game-card-body">
-              <h2>Regalos escondidos</h2>
-              <p>Tocá el regalo antes de que se esconda.</p>
-              <ul>
-                <li>Nueve ventanas en el arco.</li>
-                <li>Aparece un regalo un instante.</li>
-                <li>Sumá puntos con reflejos rápidos.</li>
-              </ul>
-              <h3>Ronda sugerida</h3>
-              <p><strong>30 segundos</strong> · aparición breve · intervalo corto.</p>
-              <h4>Truco</h4>
-              <p><em>Mirar el centro</em> ayuda a atrapar más regalos.</p>
-              <h5>Modo calma</h5>
-              <p>Si preferís menos movimiento, activá «reducir movimiento» en el sistema.</p>
-              <h6>Recordatorio</h6>
-              <p><small>Los juegos interactivos completos vivían en la SPA; aquí queda la guía.</small></p>
-            </div>
-          </article>
+        <div class="games-header">
+          <div>
+            <h1 id="heading-juegos">Jugá un ratito.</h1>
+            <p class="lead">Dos juegos. Toda la magia.</p>
+          </div>
+          <div class="audio-chip">
+            <button type="button" id="play-campana" class="btn-ghost" aria-controls="audio-campana">
+              Sonido de campana
+            </button>
+            <audio id="audio-campana" preload="metadata">
+              <source src="./media/campana.mp3" type="audio/mpeg">
+              Tu navegador no reproduce audio HTML5.
+            </audio>
+          </div>
         </div>
       </section>
 
       <hr>
 
-      <section id="galeria" aria-labelledby="heading-galeria">
-        <h2 id="heading-galeria">Galería y multimedia</h2>
-        <p>
-          Fotos libres (Unsplash) y un video / audio livianos generados para esta entrega.
-          Tocá una imagen para abrirla en grande vía enlace interno a esta misma sección.
-        </p>
+      <section id="memoria" aria-labelledby="heading-memoria">
+        <h2 id="heading-memoria">Memoria</h2>
+        <p>Encontrá dos símbolos iguales. Teclado y tacto listos.</p>
 
-        <div class="gallery-grid mt-4">
-          <a href="#galeria">
-            <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Árbol de Navidad" width="160" height="120">
-          </a>
-          <a href="#galeria">
-            <img class="img-thumb" src="./img/luces.jpg" alt="Luces cálidas" width="160" height="120">
-          </a>
-          <a href="#galeria">
-            <img class="img-thumb" src="./img/regalos.jpg" alt="Regalos" width="160" height="120">
-          </a>
-          <a href="#galeria">
-            <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente" width="160" height="120">
-          </a>
+        <div class="game-toolbar">
+          <p id="memory-score" class="tabular-nums">Parejas 0/8 · Intentos 0</p>
+          <div class="game-toolbar-actions">
+            <button type="button" id="memory-pause" class="btn-ghost" aria-pressed="false">Pausar</button>
+            <button type="button" id="memory-reset" class="btn-ghost">Reiniciar</button>
+          </div>
+        </div>
+        <p id="memory-pause-status" class="field-hint" role="status" hidden>Partida pausada</p>
+        <p id="memory-live" class="sr-only" aria-live="polite">Parejas 0 de 8. 0 intentos.</p>
+
+        <div id="memory-board" class="memory-grid" role="grid" aria-label="Tablero de memoria"></div>
+
+        <div id="memory-win" class="game-win" role="status" hidden>
+          <p class="win-title">¡Ocho parejas, una Navidad!</p>
+          <p id="memory-attempts-final" class="tabular-nums">0 intentos.</p>
+          <button type="button" id="memory-again" class="btn-cta">Jugar de nuevo</button>
         </div>
 
-        <div class="media-block">
-          <h3>Video corto de la villa</h3>
-          <p>Montaje a partir de las fotos del repo (menos de 3&nbsp;MB).</p>
-          <video controls preload="metadata" poster="./img/luces.jpg">
-            <source src="./media/villa-navidad.mp4" type="video/mp4">
-            Tu navegador no reproduce video HTML5.
-          </video>
+        <h3>Cómo se juega</h3>
+        <ol>
+          <li>Dá vuelta dos cartas.</li>
+          <li>Si coinciden, suman pareja.</li>
+          <li>Completá las ocho.</li>
+        </ol>
+      </section>
+
+      <hr>
+
+      <section id="regalos" aria-labelledby="heading-regalos">
+        <h2 id="heading-regalos">Regalos escondidos</h2>
+        <p>Tocá el regalo antes de que se esconda. Flechas, números 1–9 o toque.</p>
+
+        <div id="gifts-ready">
+          <p>Nueve ventanas. Un solo regalo a la vez.</p>
+          <p class="lead">Tocá la ventana antes de que se esconda. Tenés 30 segundos.</p>
+          <button type="button" id="gifts-start" class="btn-cta">Jugar</button>
         </div>
 
-        <div class="media-block">
-          <h3>Audio de campanilla</h3>
-          <p>Tono sintético original del proyecto (menos de 1&nbsp;MB).</p>
-          <audio controls preload="metadata">
-            <source src="./media/campana.mp3" type="audio/mpeg">
-            Tu navegador no reproduce audio HTML5.
-          </audio>
+        <div id="gifts-play" hidden>
+          <div class="game-toolbar">
+            <p id="gifts-score" class="tabular-nums">Tiempo 30s · Regalos 0</p>
+            <div class="game-toolbar-actions">
+              <button type="button" id="gifts-pause" class="btn-ghost" aria-pressed="false" hidden>Pausar</button>
+              <button type="button" id="gifts-reset" class="btn-ghost">Reiniciar</button>
+            </div>
+          </div>
+          <p id="gifts-pause-status" class="field-hint" role="status" hidden>Ronda pausada</p>
+          <div id="gifts-board" class="windows-grid" role="grid" aria-label="Ventanas de regalos"></div>
+          <p id="gifts-caught" class="field-hint" role="status" hidden>¡Lo encontraste! +1</p>
         </div>
 
-        <p>
-          Enlace externo de referencia:
-          <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.es" rel="noopener noreferrer" target="_blank">
-            Creative Commons CC0
-          </a>
-        </p>
+        <div id="gifts-result" class="game-win" role="status" hidden>
+          <p id="gifts-result-score" class="win-title">Atrapaste 0 regalos</p>
+          <button type="button" id="gifts-again" class="btn-cta">Otra ronda</button>
+        </div>
+
+        <h3>Ronda sugerida</h3>
+        <p><strong>30 segundos</strong> · aparición breve · intervalo corto.</p>
+        <h4>Truco</h4>
+        <p><em>Mirar el centro</em> ayuda a atrapar más regalos.</p>
+        <h5>Modo calma</h5>
+        <p>Si preferís menos movimiento, activá «reducir movimiento» en el sistema.</p>
+        <h6>Recordatorio</h6>
+        <p><small>Puntuación y reinicio viven en esta misma página.</small></p>
+        <ul>
+          <li>Nueve ventanas en el arco.</li>
+          <li>Aparece un regalo un instante.</li>
+          <li>Sumá puntos con reflejos rápidos.</li>
+        </ul>
       </section>
     </main>
 
@@ -145,11 +145,17 @@
         <a href="./index.html">Inicio</a>
         ·
         <a href="./tarjetas.html">Tarjetas</a>
+        ·
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.es" rel="noopener noreferrer" target="_blank">
+          Creative Commons CC0
+        </a>
       </p>
     </footer>
 
     <script src="./js/countdown-logic.js"></script>
+    <script src="./js/game-logic.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/nav-current.js"></script>
+    <script src="./js/juegos.js"></script>
   </body>
 </html>

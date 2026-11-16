@@ -43,16 +43,19 @@ Abrí `http://localhost:4173/navidad-sitios-web/`.
 
 ```
 /
-  index.html          # Inicio
-  tarjetas.html       # Taller + formulario
-  juegos.html         # Juegos + galería / media
+  index.html          # Inicio + countdown + video discreto en footer
+  tarjetas.html       # Creador de tarjetas (preview + PNG canvas)
+  juegos.html         # Memoria + regalos escondidos (+ audio)
   css/
     input.css         # Entrada Tailwind CLI
     styles.css        # Tailwind compilado (commitear)
     custom.css        # CSS propio (tokens, layout, animaciones)
   js/
     main.js           # Menú, modo oscuro, countdown
-    form.js           # Validación de formulario
+    card-logic.js     # Validación + dibujo canvas PNG
+    form.js           # UI del taller de tarjetas
+    game-logic.js     # Lógica pura memoria / regalos
+    juegos.js         # UI de minijuegos + audio
     nav-current.js    # aria-current de navegación
   img/                # Imágenes libres
   media/              # Video y audio livianos
@@ -62,9 +65,10 @@ Abrí `http://localhost:4173/navidad-sitios-web/`.
 ## Funcionalidades JS
 
 1. Menú hamburguesa (`aria-expanded`)
-2. Validación de formulario (tarjetas)
+2. Validación de formulario + descarga PNG (tarjetas)
 3. Modo oscuro persistente (`localStorage`)
 4. Cuenta regresiva a Navidad (25/dic 00:00 hora local)
+5. Minijuegos: memoria de parejas y regalos escondidos (puntaje / reinicio)
 
 ## Créditos y licencias de assets
 
@@ -96,4 +100,7 @@ Copia HTML + `css` + `js` + `img` + `media` + `fonts` sin Vite.
 - `npm run css:build` — compilar Tailwind a `css/styles.css`
 - `npm run css:watch` — recompilar al guardar
 - `npm run preview:pages` — servir bajo `/navidad-sitios-web/`
+- `npm run test:countdown` — unit tests del contador
+- `npm run test:cards` — unit tests de validación / export PNG
+- `npm run test:games` — unit tests de memoria y regalos
 - `npm run verify` — comprobaciones Playwright + grep de la rúbrica

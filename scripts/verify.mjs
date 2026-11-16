@@ -44,17 +44,19 @@ function contrastRatio(hexA, hexB) {
 }
 
 async function main() {
-  const countdown = spawnSync("node", ["scripts/test-countdown.mjs"], {
-    cwd: root,
-    encoding: "utf8",
-  });
-  if (countdown.status !== 0) {
-    console.error(countdown.stdout || "");
-    console.error(countdown.stderr || "");
-    console.error("FAIL countdown unit tests");
-    process.exit(1);
+  for (const script of ["test-countdown.mjs", "test-cards.mjs", "test-games.mjs"]) {
+    const unit = spawnSync("node", ["scripts/" + script], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    if (unit.status !== 0) {
+      console.error(unit.stdout || "");
+      console.error(unit.stderr || "");
+      console.error("FAIL unit tests:", script);
+      process.exit(1);
+    }
+    console.log((unit.stdout || "").trim());
   }
-  console.log((countdown.stdout || "").trim());
 
   const grepIssues = grepHtmlViolations();
   if (grepIssues.length) {
@@ -169,7 +171,7 @@ async function main() {
       await page.locator("#theme-toggle").click();
 
       if (path.includes("tarjetas")) {
-        await page.locator("#tarjeta-form button[type='submit']").click();
+        await page.locator("#tarjeta-form").evaluate((form) => form.requestSubmit());
         const errVisible = await page.locator("#error-destinatario").evaluate((el) =>
           el.classList.contains("is-visible")
         );
@@ -178,7 +180,7 @@ async function main() {
           report.push("tarjetas: validación no mostró error");
         }
 
-        const box = await page.locator("#consentimiento").boundingBox();
+        const box = await page.locator("#opt-nieve").boundingBox();
         if (!box || box.width < 44 || box.height < 44) {
           failed = true;
           report.push(`tarjetas: checkbox hit ${box?.width}x${box?.height}`);
@@ -194,14 +196,78 @@ async function main() {
 
         await page.fill("#destinatario", "Ana");
         await page.fill("#mensaje", "Felices fiestas para vos");
-        await page.check("#consentimiento");
-        await page.locator("#tarjeta-form button[type='submit']").click();
-        const ok = await page.locator("#form-success").evaluate((el) =>
-          el.classList.contains("is-visible")
-        );
-        if (!ok) {
+        await page.check("#opt-nieve");
+        await page.check("#opt-firma");
+        await page.locator('[data-template="bosque"]').click();
+        const pressed = await page.locator('[data-template="bosque"]').getAttribute("aria-pressed");
+        if (pressed !== "true") {
           failed = true;
-          report.push("tarjetas: éxito de formulario no visible");
+          report.push("tarjetas: plantilla bosque no seleccionada");
+        }
+
+        const [download] = await Promise.all([
+          page.waitForEvent("download"),
+          page.locator("#download-png").click(),
+        ]);
+        const dlPath = await download.path();
+        if (!dlPath) {
+          failed = true;
+          report.push("tarjetas: descarga PNG sin path");
+        } else {
+          const buf = readFileSync(dlPath);
+          if (buf.length < 1000 || buf[0] !== 0x89 || buf[1] !== 0x50) {
+            failed = true;
+            report.push("tarjetas: PNG inválido");
+          } else {
+            report.push(`tarjetas: PNG OK (${buf.length} bytes)`);
+          }
+        }
+        const ready = await page.locator("#png-ready").evaluate((el) => !el.hidden);
+        if (!ready) {
+          failed = true;
+          report.push("tarjetas: aviso PNG listo no visible");
+        }
+      }
+
+      if (path.includes("juegos")) {
+        const cells = page.locator("#memory-board [role='gridcell']");
+        const cellCount = await cells.count();
+        if (cellCount !== 16) {
+          failed = true;
+          report.push(`juegos: memoria cartas=${cellCount}, esperado 16`);
+        }
+        await cells.nth(0).click();
+        const symbol = await cells.nth(0).getAttribute("data-symbol");
+        const pair = page.locator(`#memory-board [data-symbol="${symbol}"]`);
+        await pair.nth(1).click();
+        const scoreText = await page.locator("#memory-score").textContent();
+        if (!/Parejas 1\/8/.test(scoreText || "")) {
+          failed = true;
+          report.push(`juegos: memoria no sumó pareja (${scoreText})`);
+        }
+        await page.locator("#memory-reset").click();
+        const resetText = await page.locator("#memory-score").textContent();
+        if (!/Parejas 0\/8/.test(resetText || "") || !/Intentos 0/.test(resetText || "")) {
+          failed = true;
+          report.push(`juegos: memoria reinicio falló (${resetText})`);
+        }
+
+        await page.locator("#gifts-start").click();
+        const open = page.locator('#gifts-board [data-window][data-open="true"]');
+        await open.first().waitFor({ timeout: 4000 });
+        await open.first().click();
+        const giftsScore = await page.locator("#gifts-score").textContent();
+        if (!/Regalos 1/.test(giftsScore || "")) {
+          failed = true;
+          report.push(`juegos: regalos no sumó (${giftsScore})`);
+        }
+        await page.locator("#gifts-reset").click();
+        const playVisible = await page.locator("#gifts-start").isVisible();
+        if (!playVisible) {
+          failed = true;
+          report.push("juegos: regalos reinicio no volvió a Jugar");
+        } else {
+          report.push("juegos: memoria + regalos score/reinicio OK");
         }
       }
 

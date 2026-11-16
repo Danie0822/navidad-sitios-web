@@ -1,4 +1,4 @@
-<!-- Propósito: taller de tarjetas con formulario validado y galería de inspiración. -->
+<!-- Propósito: taller de tarjetas — plantillas, preview en vivo y descarga PNG por canvas. -->
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -45,14 +45,53 @@
     <main class="page-shell py-8 sm:py-10">
       <section aria-labelledby="heading-tarjetas">
         <h1 id="heading-tarjetas">Un poquito de vos, en una tarjeta.</h1>
-        <p class="lead">Elegí un diseño, escribí algo lindo y llevátelo como recuerdo.</p>
+        <p class="lead">Elegí un diseño, escribí algo lindo y llevátelo en PNG.</p>
 
         <div class="cards-grid mt-8">
-          <div class="studio">
+          <div>
             <h2>Taller</h2>
-            <p>Completá el formulario. Validamos en el navegador, sin servidor.</p>
+            <p>Completá el formulario. La vista previa y el PNG usan las mismas opciones.</p>
 
             <form id="tarjeta-form" action="#" method="post">
+              <input type="hidden" id="plantilla" name="plantilla" value="villa">
+
+              <fieldset class="form-row">
+                <legend><strong>Elegí tu diseño</strong></legend>
+                <p class="field-hint">Imágenes como vínculos a la vista previa:</p>
+                <div class="template-picks" role="group" aria-label="Plantillas">
+                  <a
+                    class="template-link is-selected"
+                    href="#vista-previa"
+                    data-template="villa"
+                    aria-pressed="true"
+                    title="Diseño Villa"
+                  >
+                    <img class="img-thumb" src="./img/ambiente.jpg" alt="Plantilla Villa" width="160" height="120">
+                    <span>Villa</span>
+                  </a>
+                  <a
+                    class="template-link"
+                    href="#vista-previa"
+                    data-template="bosque"
+                    aria-pressed="false"
+                    title="Diseño Bosque"
+                  >
+                    <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Plantilla Bosque" width="160" height="120">
+                    <span>Bosque</span>
+                  </a>
+                  <a
+                    class="template-link"
+                    href="#vista-previa"
+                    data-template="regalos"
+                    aria-pressed="false"
+                    title="Diseño Regalos"
+                  >
+                    <img class="img-thumb" src="./img/regalos.jpg" alt="Plantilla Regalos" width="160" height="120">
+                    <span>Regalos</span>
+                  </a>
+                </div>
+              </fieldset>
+
               <div class="form-row">
                 <label for="destinatario"><strong>Para</strong></label>
                 <input
@@ -60,65 +99,58 @@
                   type="text"
                   id="destinatario"
                   name="destinatario"
-                  placeholder="Nombre de quien recibe"
-                  autocomplete="name">
+                  placeholder="Ej. Daniela"
+                  autocomplete="off"
+                  maxlength="120">
+                <p id="count-dest" class="field-hint">0/120</p>
                 <p id="error-destinatario" class="form-error" role="alert"></p>
               </div>
 
               <div class="form-row">
-                <label for="mensaje"><em>Mensaje</em></label>
+                <label for="mensaje"><em>Tu mensaje</em></label>
                 <textarea
                   class="field"
                   id="mensaje"
                   name="mensaje"
                   rows="4"
-                  placeholder="Escribí un deseo corto y cálido…"
+                  maxlength="600"
+                  placeholder="Tu saludo navideño…"
                 ></textarea>
+                <p id="count-msg" class="field-hint">0/600</p>
                 <p id="error-mensaje" class="form-error" role="alert"></p>
               </div>
 
-              <div class="form-row">
-                <label for="estilo">Estilo preferido</label>
-                <select class="field" id="estilo" name="estilo">
-                  <option value="villa">Villa (granate)</option>
-                  <option value="bosque">Bosque (marfil)</option>
-                  <option value="regalos">Regalos (verde)</option>
-                </select>
+              <div class="checkbox-row">
+                <input type="checkbox" id="opt-nieve" name="nieve">
+                <label for="opt-nieve">
+                  Agregar <strong>nieve</strong> a la tarjeta.
+                  <small>(Se ve en la preview y en el PNG.)</small>
+                </label>
               </div>
 
               <div class="checkbox-row">
-                <input type="checkbox" id="consentimiento" name="consentimiento">
-                <label for="consentimiento">
-                  Confirmo que este mensaje es solo una demo educativa.
-                  <small>(No se envía a ningún servidor.)</small>
+                <input type="checkbox" id="opt-firma" name="firma">
+                <label for="opt-firma">
+                  Incluir <em>firma</em> «Con cariño · Villa Navidad».
+                  <small>(Opción de la tarjeta, no un envío.)</small>
                 </label>
               </div>
-              <p id="error-consentimiento" class="form-error" role="alert"></p>
 
-              <button type="submit" class="btn-cta">Guardar pedido simbólico</button>
-              <button type="reset" class="btn-ghost">Limpiar</button>
+              <div class="form-actions">
+                <button type="submit" id="download-png" class="btn-cta" disabled>Descargar PNG</button>
+                <button type="reset" class="btn-ghost">Limpiar</button>
+              </div>
+              <p id="download-help" class="field-hint">Escribí destinatario y mensaje para descargar.</p>
             </form>
-
-            <p id="form-success" class="form-success" role="status"></p>
           </div>
 
-          <div>
-            <h2>Inspiración</h2>
-            <p>Imágenes como vínculos a la galería de juegos:</p>
-            <div class="gallery-grid mt-4">
-              <a href="./juegos.html#galeria" title="Ver galería — árbol">
-                <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Árbol de Navidad iluminado" width="160" height="120">
-              </a>
-              <a href="./juegos.html#galeria" title="Ver galería — regalos">
-                <img class="img-thumb" src="./img/regalos.jpg" alt="Regalos envueltos con lazo" width="160" height="120">
-              </a>
-              <a href="./juegos.html#galeria" title="Ver galería — luces">
-                <img class="img-thumb" src="./img/luces.jpg" alt="Luces navideñas borrosas" width="160" height="120">
-              </a>
-              <a href="./juegos.html#galeria" title="Ver galería — ambiente">
-                <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente navideño cálido" width="160" height="120">
-              </a>
+          <aside class="studio" id="vista-previa" aria-labelledby="heading-preview">
+            <h2 id="heading-preview">Vista previa</h2>
+            <p class="field-hint">PNG cuadrado · 1080 × 1080 · dibujado en &lt;canvas&gt;</p>
+            <div class="card-preview-frame">
+              <canvas id="card-canvas" class="card-canvas" width="1080" height="1080" role="img" aria-label="Vista previa de la tarjeta"></canvas>
             </div>
+            <p id="png-ready" class="form-success is-visible" hidden>PNG listo</p>
 
             <div id="box-demo" class="mt-6">
               <h3>Modelo de caja</h3>
@@ -127,7 +159,7 @@
                 cuentan dentro del ancho.
               </p>
             </div>
-          </div>
+          </aside>
         </div>
       </section>
 
@@ -136,9 +168,9 @@
       <section aria-labelledby="heading-pasos">
         <h2 id="heading-pasos">Pasos sugeridos</h2>
         <ol>
-          <li>Pensá a quién le dedicás la tarjeta.</li>
-          <li>Elegí el tono: villa, bosque o regalos.</li>
-          <li>Revisá el mensaje en voz alta.</li>
+          <li>Elegí la plantilla tocando su miniatura.</li>
+          <li>Escribí destinatario y mensaje.</li>
+          <li>Activá nieve o firma si querés, y descargá el PNG.</li>
         </ol>
         <h3>Consejo rápido</h3>
         <ul>
@@ -148,7 +180,9 @@
         <h4>Accesibilidad</h4>
         <p>Los errores del formulario se anuncian con <code>role="alert"</code>.</p>
         <h5>Pie de sección</h5>
-        <p><small>Textos reutilizados del taller Scout V2.</small></p>
+        <p><small>Portado del taller Scout V2 (React) a JS puro.</small></p>
+        <h6>Nota</h6>
+        <p>Sin cuentas. Sin apuro. Con cariño.</p>
       </section>
     </main>
 
@@ -162,6 +196,7 @@
     </footer>
 
     <script src="./js/countdown-logic.js"></script>
+    <script src="./js/card-logic.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/nav-current.js"></script>
     <script src="./js/form.js"></script>

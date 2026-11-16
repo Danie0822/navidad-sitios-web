@@ -8,6 +8,8 @@
     "css:watch": "npx @tailwindcss/cli -i ./css/input.css -o ./css/styles.css --watch",
     "preview:pages": "node scripts/preview-pages.mjs",
     "test:countdown": "node scripts/test-countdown.mjs",
+    "test:cards": "node scripts/test-cards.mjs",
+    "test:games": "node scripts/test-games.mjs",
     "html:validate": "html-validate index.html tarjetas.html juegos.html",
     "verify": "node scripts/verify.mjs"
   },
