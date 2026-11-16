@@ -1,4 +1,4 @@
-/* Propósito: UI de memoria, regalos escondidos y botón de audio de campana. */
+/* Propósito: catálogo + memoria + regalos (paridad React Juegos/Memoria/Regalos). */
 
 (function () {
   "use strict";
@@ -6,19 +6,52 @@
   if (!globalThis.VillaGames) return;
   var G = globalThis.VillaGames;
 
-  initAudio();
+  initViews();
   initMemory();
   initGifts();
 
-  function initAudio() {
-    var btn = document.getElementById("play-campana");
-    var audio = document.getElementById("audio-campana");
-    if (!btn || !audio) return;
-    btn.addEventListener("click", function () {
-      audio.currentTime = 0;
-      var play = audio.play();
-      if (play && typeof play.catch === "function") play.catch(function () {});
+  /** Cambia entre catálogo / memoria / regalos según el hash (#memoria|#regalos). */
+  function initViews() {
+    var catalog = document.getElementById("view-catalog");
+    var memoria = document.getElementById("view-memoria");
+    var regalos = document.getElementById("view-regalos");
+    if (!catalog || !memoria || !regalos) return;
+
+    function show(view) {
+      catalog.hidden = view !== "catalog";
+      memoria.hidden = view !== "memoria";
+      regalos.hidden = view !== "regalos";
+      if (view === "memoria") {
+        var h = document.getElementById("heading-memoria");
+        if (h) h.focus();
+      } else if (view === "regalos") {
+        var hr = document.getElementById("heading-regalos");
+        if (hr) hr.focus();
+      } else {
+        var from = sessionStorage.getItem("villa-from-game");
+        var focusMem = document.getElementById("catalog-memoria");
+        var focusReg = document.getElementById("catalog-regalos");
+        if (from === "memoria" && focusMem) focusMem.focus();
+        if (from === "regalos" && focusReg) focusReg.focus();
+        sessionStorage.removeItem("villa-from-game");
+      }
+    }
+
+    function route() {
+      var hash = (location.hash || "").replace(/^#/, "");
+      if (hash === "memoria") show("memoria");
+      else if (hash === "regalos") show("regalos");
+      else show("catalog");
+    }
+
+    document.querySelectorAll("[data-back]").forEach(function (link) {
+      link.addEventListener("click", function () {
+        sessionStorage.setItem("villa-from-game", link.getAttribute("data-back") || "");
+      });
     });
+
+    window.addEventListener("hashchange", route);
+    route();
   }
 
   function symbolLabel(id) {

@@ -43,32 +43,21 @@ Abrí `http://localhost:4173/navidad-sitios-web/`.
 
 ```
 /
-  index.html          # Inicio + countdown + video discreto en footer
-  tarjetas.html       # Creador de tarjetas (preview + PNG canvas)
-  juegos.html         # Memoria + regalos escondidos (+ audio)
-  css/
-    input.css         # Entrada Tailwind CLI
-    styles.css        # Tailwind compilado (commitear)
-    custom.css        # CSS propio (tokens, layout, animaciones)
-  js/
-    main.js           # Menú, modo oscuro, countdown
-    card-logic.js     # Validación + dibujo canvas PNG
-    form.js           # UI del taller de tarjetas
-    game-logic.js     # Lógica pura memoria / regalos
-    juegos.js         # UI de minijuegos + audio
-    nav-current.js    # aria-current de navegación
-  img/                # Imágenes libres
-  media/              # Video y audio livianos
-  fonts/              # WOFF2 autohospedados (OFL)
+  index.html          # Landing + countdown (paridad React)
+  tarjetas.html       # CardEditor: plantillas, preview, PNG 1080
+  juegos.html         # Selector + #memoria + #regalos
+  docs/paridad/       # Capturas React vs vanilla
+  css/ …  js/ …  img/ …  media/ …  fonts/
 ```
+
+Paridad respecto a React `2ad0b349` (ver `docs/paridad/README.md`).
 
 ## Funcionalidades JS
 
-1. Menú hamburguesa (`aria-expanded`)
-2. Validación de formulario + descarga PNG (tarjetas)
-3. Modo oscuro persistente (`localStorage`)
-4. Cuenta regresiva a Navidad (25/dic 00:00 hora local)
-5. Minijuegos: memoria de parejas y regalos escondidos (puntaje / reinicio)
+1. Menú hamburguesa (`aria-expanded`) + tema oscuro
+2. Taller de tarjetas (preview DOM + PNG vía html-to-image vendorizado)
+3. Cuenta regresiva a Navidad
+4. Catálogo de juegos + memoria + regalos escondidos (hash views)
 
 ## Créditos y licencias de assets
 

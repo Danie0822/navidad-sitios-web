@@ -1,4 +1,4 @@
-<!-- Propósito: minijuegos jugables — memoria de parejas y regalos escondidos, con audio discreto. -->
+<!-- Propósito: catálogo de 2 juegos + memoria y regalos (paridad React Juegos/Memoria/Regalos). -->
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -43,29 +43,85 @@
     </header>
 
     <main class="page-shell py-8 sm:py-10">
-      <section aria-labelledby="heading-juegos">
-        <div class="games-header">
+      <!-- Vista catálogo (React /juegos) -->
+      <section id="view-catalog" aria-labelledby="heading-juegos">
+        <div class="game-header">
           <div>
             <h1 id="heading-juegos">Jugá un ratito.</h1>
             <p class="lead">Dos juegos. Toda la magia.</p>
           </div>
-          <div class="audio-chip">
-            <button type="button" id="play-campana" class="btn-ghost" aria-controls="audio-campana">
-              Sonido de campana
-            </button>
-            <audio id="audio-campana" preload="metadata">
-              <source src="./media/campana.mp3" type="audio/mpeg">
-              Tu navegador no reproduce audio HTML5.
-            </audio>
-          </div>
+        </div>
+
+        <div class="catalog-grid mt-8">
+          <a id="catalog-memoria" class="catalog-link" href="#memoria">
+            <div class="catalog-art motion-on" aria-hidden="true">
+              <svg viewBox="0 0 636 494" class="catalog-svg">
+                <rect width="636" height="494" fill="#183C32" rx="16"></rect>
+                <path d="M40 36 H596" stroke="#E7B960" stroke-width="3"></path>
+                <circle cx="80" cy="36" r="7" fill="#E7B960"></circle>
+                <circle cx="160" cy="36" r="7" fill="#A72C36"></circle>
+                <circle cx="240" cy="36" r="7" fill="#E7B960"></circle>
+                <circle cx="320" cy="36" r="7" fill="#A72C36"></circle>
+                <circle cx="400" cy="36" r="7" fill="#E7B960"></circle>
+                <circle cx="480" cy="36" r="7" fill="#A72C36"></circle>
+                <circle cx="560" cy="36" r="7" fill="#E7B960"></circle>
+                <g transform="translate(150 250) rotate(-12)">
+                  <g class="anim-card-a">
+                    <rect x="-70" y="-95" width="140" height="190" rx="12" fill="#FFFAF0" stroke="#E7B960" stroke-width="4"></rect>
+                    <rect x="-22" y="-8" width="40" height="32" rx="3" fill="#A72C36"></rect>
+                    <rect x="-6" y="-8" width="8" height="32" fill="#E7B960"></rect>
+                  </g>
+                </g>
+                <g transform="translate(318 230) rotate(4)">
+                  <g class="anim-card-b">
+                    <rect x="-70" y="-95" width="140" height="190" rx="12" fill="#FFFAF0" stroke="#E7B960" stroke-width="4"></rect>
+                    <path d="M-18 12 Q-10 2 -10 -12 A12 12 0 0 1 10 -12 Q10 2 18 12 Z" fill="#E7B960"></path>
+                    <circle cy="18" r="4" fill="#A72C36"></circle>
+                  </g>
+                </g>
+                <g transform="translate(470 255) rotate(16)">
+                  <g class="anim-card-a">
+                    <rect x="-70" y="-95" width="140" height="190" rx="12" fill="#FFFAF0" stroke="#E7B960" stroke-width="4"></rect>
+                    <path d="M0 -24 L7 -6 L26 -5 L11 7 L16 24 L0 14 L-16 24 L-11 7 L-26 -5 L-7 -6 Z" fill="#E7B960"></path>
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <h2 class="mt-5">Memoria</h2>
+            <p class="lead">Encontrá las ocho parejas.</p>
+            <span class="btn-cta mt-4">Jugar memoria</span>
+          </a>
+
+          <a id="catalog-regalos" class="catalog-link" href="#regalos">
+            <div class="catalog-art motion-on" aria-hidden="true">
+              <svg viewBox="0 0 636 494" class="catalog-svg">
+                <rect width="636" height="494" fill="#70232F" rx="16"></rect>
+                <path d="M48 48 Q180 20 318 48 T588 44" stroke="#E7B960" stroke-width="3" fill="none"></path>
+                <g transform="translate(228 228)">
+                  <rect width="180" height="120" rx="10" fill="#E9DAC3"></rect>
+                  <rect x="12" y="12" width="156" height="96" rx="6" fill="#183C32"></rect>
+                  <g class="anim-gift-lid" transform="translate(90 70)">
+                    <rect x="-22" y="-8" width="44" height="28" rx="3" fill="#A72C36"></rect>
+                    <rect x="-4" y="-14" width="8" height="34" fill="#E7B960"></rect>
+                    <path d="M0 -14 C-18 -34 -22 -12 0 -14 C18 -34 22 -12 0 -14" stroke="#E7B960" stroke-width="3" fill="none"></path>
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <h2 class="mt-5">Regalos escondidos</h2>
+            <p class="lead">Tocá el regalo antes de que se esconda.</p>
+            <span class="btn-cta mt-4">Buscar regalos</span>
+          </a>
         </div>
       </section>
 
-      <hr>
-
-      <section id="memoria" aria-labelledby="heading-memoria">
-        <h2 id="heading-memoria">Memoria</h2>
-        <p>Encontrá dos símbolos iguales. Teclado y tacto listos.</p>
+      <!-- Vista memoria (React /juegos/memoria) -->
+      <section id="view-memoria" aria-labelledby="heading-memoria" hidden>
+        <p class="mb-4">
+          <a href="#catalog" class="nav-link back-link" data-back="memoria">Volver a juegos</a>
+        </p>
+        <h1 id="heading-memoria" tabindex="-1">Memoria</h1>
+        <p class="lead">Encontrá dos símbolos iguales.</p>
 
         <div class="game-toolbar">
           <p id="memory-score" class="tabular-nums">Parejas 0/8 · Intentos 0</p>
@@ -76,33 +132,27 @@
         </div>
         <p id="memory-pause-status" class="field-hint" role="status" hidden>Partida pausada</p>
         <p id="memory-live" class="sr-only" aria-live="polite">Parejas 0 de 8. 0 intentos.</p>
-
         <div id="memory-board" class="memory-grid" role="grid" aria-label="Tablero de memoria"></div>
-
-        <div id="memory-win" class="game-win" role="status" hidden>
+        <div id="memory-win" class="game-win motion-on" role="status" hidden>
           <p class="win-title">¡Ocho parejas, una Navidad!</p>
           <p id="memory-attempts-final" class="tabular-nums">0 intentos.</p>
-          <button type="button" id="memory-again" class="btn-cta">Jugar de nuevo</button>
+          <div class="anim-win win-stars" aria-hidden="true"><span>★</span><span>★</span><span>★</span></div>
+          <button type="button" id="memory-again" class="btn-cta mt-4">Jugar de nuevo</button>
         </div>
-
-        <h3>Cómo se juega</h3>
-        <ol>
-          <li>Dá vuelta dos cartas.</li>
-          <li>Si coinciden, suman pareja.</li>
-          <li>Completá las ocho.</li>
-        </ol>
       </section>
 
-      <hr>
-
-      <section id="regalos" aria-labelledby="heading-regalos">
-        <h2 id="heading-regalos">Regalos escondidos</h2>
-        <p>Tocá el regalo antes de que se esconda. Flechas, números 1–9 o toque.</p>
+      <!-- Vista regalos (React /juegos/regalos) -->
+      <section id="view-regalos" aria-labelledby="heading-regalos" hidden>
+        <p class="mb-4">
+          <a href="#catalog" class="nav-link back-link" data-back="regalos">Volver a juegos</a>
+        </p>
+        <h1 id="heading-regalos" tabindex="-1">Regalos escondidos</h1>
+        <p class="lead">Buscá el regalo que asoma. Tocá su ventana antes de que se esconda.</p>
 
         <div id="gifts-ready">
           <p>Nueve ventanas. Un solo regalo a la vez.</p>
           <p class="lead">Tocá la ventana antes de que se esconda. Tenés 30 segundos.</p>
-          <button type="button" id="gifts-start" class="btn-cta">Jugar</button>
+          <button type="button" id="gifts-start" class="btn-cta mt-5">Jugar</button>
         </div>
 
         <div id="gifts-play" hidden>
@@ -118,38 +168,16 @@
           <p id="gifts-caught" class="field-hint" role="status" hidden>¡Lo encontraste! +1</p>
         </div>
 
-        <div id="gifts-result" class="game-win" role="status" hidden>
+        <div id="gifts-result" class="game-win motion-on" role="status" hidden>
           <p id="gifts-result-score" class="win-title">Atrapaste 0 regalos</p>
-          <button type="button" id="gifts-again" class="btn-cta">Otra ronda</button>
+          <div class="anim-win win-stars" aria-hidden="true"><span>★</span><span>★</span><span>★</span></div>
+          <button type="button" id="gifts-again" class="btn-cta mt-4">Otra ronda</button>
         </div>
-
-        <h3>Ronda sugerida</h3>
-        <p><strong>30 segundos</strong> · aparición breve · intervalo corto.</p>
-        <h4>Truco</h4>
-        <p><em>Mirar el centro</em> ayuda a atrapar más regalos.</p>
-        <h5>Modo calma</h5>
-        <p>Si preferís menos movimiento, activá «reducir movimiento» en el sistema.</p>
-        <h6>Recordatorio</h6>
-        <p><small>Puntuación y reinicio viven en esta misma página.</small></p>
-        <ul>
-          <li>Nueve ventanas en el arco.</li>
-          <li>Aparece un regalo un instante.</li>
-          <li>Sumá puntos con reflejos rápidos.</li>
-        </ul>
       </section>
     </main>
 
     <footer class="site-footer page-shell">
       <p>Villa Navidad — con cariño. Sin cuentas.</p>
-      <p>
-        <a href="./index.html">Inicio</a>
-        ·
-        <a href="./tarjetas.html">Tarjetas</a>
-        ·
-        <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.es" rel="noopener noreferrer" target="_blank">
-          Creative Commons CC0
-        </a>
-      </p>
     </footer>
 
     <script src="./js/countdown-logic.js"></script>

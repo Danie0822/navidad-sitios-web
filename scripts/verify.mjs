@@ -171,38 +171,33 @@ async function main() {
       await page.locator("#theme-toggle").click();
 
       if (path.includes("tarjetas")) {
-        await page.locator("#tarjeta-form").evaluate((form) => form.requestSubmit());
-        const errVisible = await page.locator("#error-destinatario").evaluate((el) =>
-          el.classList.contains("is-visible")
-        );
-        if (!errVisible) {
+        await page.setViewportSize({ width: 1280, height: 900 });
+        const disabled = await page.locator("#download-png").isDisabled();
+        if (!disabled) {
           failed = true;
-          report.push("tarjetas: validación no mostró error");
+          report.push("tarjetas: Descargar PNG debería estar disabled vacío");
+        }
+        const help = await page.locator("#download-help").textContent();
+        if (!/destinatario y mensaje/i.test(help || "")) {
+          failed = true;
+          report.push("tarjetas: ayuda de validación ausente");
         }
 
-        const box = await page.locator("#opt-nieve").boundingBox();
-        if (!box || box.width < 44 || box.height < 44) {
+        await page.fill("#dest", "Ana");
+        await page.fill("#msg", "Felices fiestas para vos");
+        await page.locator('.template-pick[data-template="bosque"]').evaluate((el) => el.click());
+        const plantilla = await page.locator("#plantilla").inputValue();
+        const pressed = await page
+          .locator('.template-pick[data-template="bosque"]')
+          .getAttribute("aria-pressed");
+        if (plantilla !== "bosque" || pressed !== "true") {
           failed = true;
-          report.push(`tarjetas: checkbox hit ${box?.width}x${box?.height}`);
-        } else {
-          report.push(`tarjetas: checkbox ${box.width}x${box.height}`);
+          report.push(`tarjetas: plantilla bosque no seleccionada (val=${plantilla}, aria=${pressed})`);
         }
-
-        const footerLink = await page.locator(".site-footer a").first().boundingBox();
-        if (!footerLink || footerLink.height < 24) {
+        const kept = await page.locator("#dest").inputValue();
+        if (kept !== "Ana") {
           failed = true;
-          report.push(`tarjetas: footer link h=${footerLink?.height}`);
-        }
-
-        await page.fill("#destinatario", "Ana");
-        await page.fill("#mensaje", "Felices fiestas para vos");
-        await page.check("#opt-nieve");
-        await page.check("#opt-firma");
-        await page.locator('[data-template="bosque"]').click();
-        const pressed = await page.locator('[data-template="bosque"]').getAttribute("aria-pressed");
-        if (pressed !== "true") {
-          failed = true;
-          report.push("tarjetas: plantilla bosque no seleccionada");
+          report.push("tarjetas: cambiar plantilla no conservó campos");
         }
 
         const [download] = await Promise.all([
@@ -230,6 +225,19 @@ async function main() {
       }
 
       if (path.includes("juegos")) {
+        const catalogVisible = await page.locator("#view-catalog").isVisible();
+        const catCount = await page.locator(".catalog-link").count();
+        if (!catalogVisible || catCount !== 2) {
+          failed = true;
+          report.push(`juegos: selector esperado 2 links, got ${catCount}`);
+        }
+
+        await page.locator("#catalog-memoria").click();
+        await page.waitForTimeout(100);
+        if (!(await page.locator("#view-memoria").isVisible())) {
+          failed = true;
+          report.push("juegos: no entró a memoria");
+        }
         const cells = page.locator("#memory-board [role='gridcell']");
         const cellCount = await cells.count();
         if (cellCount !== 16) {
@@ -252,6 +260,9 @@ async function main() {
           report.push(`juegos: memoria reinicio falló (${resetText})`);
         }
 
+        await page.locator('a[data-back="memoria"]').click();
+        await page.locator("#catalog-regalos").click();
+        await page.waitForTimeout(100);
         await page.locator("#gifts-start").click();
         const open = page.locator('#gifts-board [data-window][data-open="true"]');
         await open.first().waitFor({ timeout: 4000 });
@@ -267,7 +278,7 @@ async function main() {
           failed = true;
           report.push("juegos: regalos reinicio no volvió a Jugar");
         } else {
-          report.push("juegos: memoria + regalos score/reinicio OK");
+          report.push("juegos: selector + memoria + regalos OK");
         }
       }
 
