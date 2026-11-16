@@ -300,6 +300,8 @@
         var isOpen = state.active === i;
         var justCaught = btn.getAttribute("data-caught") === "true" && !isOpen;
         btn.setAttribute("data-open", isOpen ? "true" : "false");
+        // Clase roja solo mientras el regalo está en esta ventana.
+        btn.classList.toggle("is-gift-active", isOpen);
         btn.setAttribute(
           "aria-label",
           "Ventana " + (i + 1) + (isOpen ? ", con regalo" : ", cerrada")
