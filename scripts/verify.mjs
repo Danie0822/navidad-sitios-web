@@ -81,7 +81,7 @@ async function main() {
   await new Promise((r) => setTimeout(r, 600));
 
   const browser = await chromium.launch({ headless: true });
-  const pages = ["/", "/tarjetas.html", "/juegos.html"];
+  const pages = ["/", "/tarjetas.html", "/juegos.html", "/participantes.html"];
   const widths = [375, 768, 1280];
   let failed = false;
   const report = [];
@@ -185,15 +185,10 @@ async function main() {
 
         await page.fill("#dest", "Ana");
         await page.fill("#msg", "Felices fiestas para vos");
-        const thumbLink = page.locator('.template-pick[data-template="bosque"]');
-        const thumbImg = thumbLink.locator("img");
-        if ((await thumbImg.count()) < 1) {
-          failed = true;
-          report.push("tarjetas: miniatura sin <img> (imágenes como vínculos)");
-        }
-        await thumbLink.evaluate((el) => el.click());
+        const thumbBtn = page.locator('.template-pick[data-template="bosque"]');
+        await thumbBtn.evaluate((el) => el.click());
         const plantilla = await page.locator("#plantilla").inputValue();
-        const pressed = await thumbLink.getAttribute("aria-pressed");
+        const pressed = await thumbBtn.getAttribute("aria-pressed");
         if (plantilla !== "bosque" || pressed !== "true") {
           failed = true;
           report.push(`tarjetas: plantilla bosque no seleccionada (val=${plantilla}, aria=${pressed})`);
@@ -228,25 +223,41 @@ async function main() {
         }
       }
 
-      if (path === "/" || path.endsWith("/")) {
-        const videoCount = await page.locator("video source[src*='villa-navidad']").count();
-        if (!videoCount) {
+      if (path.includes("participantes")) {
+        const hasVideo = (await page.locator("video source[src*='villa-navidad']").count()) > 0;
+        const hasAudio = (await page.locator("audio source[src*='campana']").count()) > 0;
+        const imgLink = page.locator('a[href="./index.html"] img.img-thumb');
+        const ext = page.locator('.site-footer a[target="_blank"]');
+        const box = await page.locator("#confirmacion").boundingBox();
+        if (!hasVideo || !hasAudio) {
           failed = true;
-          report.push("index: falta video corto en landing");
+          report.push("participantes: falta video/audio");
+        }
+        if ((await imgLink.count()) < 1) {
+          failed = true;
+          report.push("participantes: falta imagen como vínculo");
+        }
+        if ((await ext.count()) < 1) {
+          failed = true;
+          report.push("participantes: falta enlace externo en footer");
+        }
+        if (!box || box.width < 44 || box.height < 44) {
+          failed = true;
+          report.push(`participantes: checkbox hit ${box?.width}x${box?.height}`);
         } else {
-          report.push("index: video en hero OK");
+          report.push("participantes: video/audio/img-link/checkbox OK");
+        }
+        await page.locator("#participantes-form button[type='submit']").click();
+        const errVisible = await page.locator("#error-confirmacion").evaluate((el) =>
+          el.classList.contains("is-visible")
+        );
+        if (!errVisible) {
+          failed = true;
+          report.push("participantes: validación checkbox no mostró error");
         }
       }
 
       if (path.includes("juegos")) {
-        const audioBtn = page.locator("#audio-toggle");
-        const audioEl = page.locator("#game-audio");
-        if ((await audioBtn.count()) !== 1 || (await audioEl.count()) !== 1) {
-          failed = true;
-          report.push("juegos: falta play/mute de audio en catálogo");
-        } else {
-          report.push("juegos: audio play/mute OK");
-        }
         const catalogVisible = await page.locator("#view-catalog").isVisible();
         const catCount = await page.locator(".catalog-link").count();
         if (!catalogVisible || catCount !== 2) {

@@ -7,48 +7,8 @@
   var G = globalThis.VillaGames;
 
   initViews();
-  initAudio();
   initMemory();
   initGifts();
-
-  /** Play/mute del sonido de juego dentro del header del catálogo (rúbrica audio). */
-  function initAudio() {
-    var btn = document.getElementById("audio-toggle");
-    var audio = document.getElementById("game-audio");
-    if (!btn || !audio) return;
-    var playing = false;
-
-    function sync() {
-      btn.setAttribute("aria-pressed", playing ? "true" : "false");
-      btn.textContent = playing ? "Silenciar" : "Sonido";
-    }
-
-    btn.addEventListener("click", function () {
-      if (playing) {
-        audio.pause();
-        playing = false;
-      } else {
-        audio.currentTime = 0;
-        var p = audio.play();
-        if (p && typeof p.catch === "function") {
-          p.catch(function () {
-            playing = false;
-            sync();
-          });
-        }
-        playing = true;
-      }
-      sync();
-    });
-
-    audio.addEventListener("ended", function () {
-      if (!audio.loop) {
-        playing = false;
-        sync();
-      }
-    });
-    sync();
-  }
 
   /** Cambia entre catálogo / memoria / regalos según el hash (#memoria|#regalos). */
   function initViews() {

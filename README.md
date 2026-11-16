@@ -43,14 +43,15 @@ Abrí `http://localhost:4173/navidad-sitios-web/`.
 
 ```
 /
-  index.html          # Landing + countdown (paridad React)
-  tarjetas.html       # CardEditor: plantillas, preview, PNG 1080
-  juegos.html         # Selector + #memoria + #regalos
-  docs/paridad/       # Capturas React vs vanilla
+  index.html            # Landing + countdown (paridad React)
+  tarjetas.html         # CardEditor (paridad React)
+  juegos.html           # Selector + memoria + regalos (paridad React)
+  participantes.html    # Rúbrica multimedia + créditos Daniel/Oscar
+  docs/paridad/         # Capturas React vs vanilla
   css/ …  js/ …  img/ …  media/ …  fonts/
 ```
 
-Paridad respecto a React `2ad0b349` (ver `docs/paridad/README.md`).
+Paridad React `2ad0b349` en las 3 pantallas; rúbrica extra en Participantes (ver `docs/paridad/README.md`).
 
 ## Funcionalidades JS
 

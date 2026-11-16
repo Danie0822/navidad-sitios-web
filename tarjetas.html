@@ -22,6 +22,7 @@
             <a class="nav-link" data-page="index.html" href="./index.html">Inicio</a>
             <a class="nav-link" data-page="tarjetas.html" href="./tarjetas.html">Tarjetas</a>
             <a class="nav-link" data-page="juegos.html" href="./juegos.html">Juegos</a>
+            <a class="nav-link" data-page="participantes.html" href="./participantes.html">Participantes</a>
           </div>
           <div class="nav-actions">
             <button type="button" id="theme-toggle" class="btn-icon" aria-pressed="false" aria-label="Cambiar a modo oscuro">
@@ -54,36 +55,18 @@
             <fieldset>
               <legend class="fieldset-title">Elegí tu diseño</legend>
               <div class="template-picks" role="group" aria-label="Plantillas">
-                <a
-                  class="template-pick is-selected"
-                  href="#vista-previa"
-                  data-template="villa"
-                  aria-pressed="true"
-                  title="Diseño Villa"
-                >
-                  <img class="img-thumb" src="./img/ambiente.jpg" alt="Plantilla Villa" width="160" height="120">
+                <button type="button" class="template-pick is-selected" data-template="villa" aria-pressed="true">
+                  <span class="thumb-art" data-thumb="villa" aria-hidden="true"></span>
                   <span class="template-label">Villa <span class="chosen-mark">Elegido</span></span>
-                </a>
-                <a
-                  class="template-pick"
-                  href="#vista-previa"
-                  data-template="bosque"
-                  aria-pressed="false"
-                  title="Diseño Bosque"
-                >
-                  <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Plantilla Bosque" width="160" height="120">
+                </button>
+                <button type="button" class="template-pick" data-template="bosque" aria-pressed="false">
+                  <span class="thumb-art" data-thumb="bosque" aria-hidden="true"></span>
                   <span class="template-label">Bosque <span class="chosen-mark" hidden>Elegido</span></span>
-                </a>
-                <a
-                  class="template-pick"
-                  href="#vista-previa"
-                  data-template="regalos"
-                  aria-pressed="false"
-                  title="Diseño Regalos"
-                >
-                  <img class="img-thumb" src="./img/regalos.jpg" alt="Plantilla Regalos" width="160" height="120">
+                </button>
+                <button type="button" class="template-pick" data-template="regalos" aria-pressed="false">
+                  <span class="thumb-art" data-thumb="regalos" aria-hidden="true"></span>
                   <span class="template-label">Regalos <span class="chosen-mark" hidden>Elegido</span></span>
-                </a>
+                </button>
               </div>
             </fieldset>
 
@@ -152,6 +135,7 @@
     <footer class="site-footer page-shell">
       <p>Villa Navidad — con cariño. Sin cuentas.</p>
       <p>
+        Enlace externo:
         <a href="https://unsplash.com/license" rel="noopener noreferrer" target="_blank">Licencia Unsplash</a>
       </p>
     </footer>

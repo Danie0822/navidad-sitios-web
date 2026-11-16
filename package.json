@@ -10,7 +10,7 @@
     "test:countdown": "node scripts/test-countdown.mjs",
     "test:cards": "node scripts/test-cards.mjs",
     "test:games": "node scripts/test-games.mjs",
-    "html:validate": "html-validate index.html tarjetas.html juegos.html",
+    "html:validate": "html-validate index.html tarjetas.html juegos.html participantes.html",
     "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {
