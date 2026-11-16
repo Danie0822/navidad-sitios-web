@@ -444,7 +444,7 @@
           '<span class="window-shutter window-shutter-l" aria-hidden="true"></span>' +
           '<span class="window-shutter window-shutter-r" aria-hidden="true"></span>' +
           '<span class="window-gift" aria-hidden="true">' +
-          '<svg width="36" height="36" viewBox="-28 -28 56 56"><rect x="-18" y="-8" width="36" height="28" rx="3" fill="#A72C36"/><rect x="-21" y="-14" width="42" height="8" rx="2" fill="#C64746"/><rect x="-3" y="-14" width="6" height="34" fill="#E7B960"/><path d="M0 -14 C-16 -32 -20 -12 0 -14 C16 -32 20 -12 0 -14" stroke="#E7B960" stroke-width="3" fill="none"/></svg>' +
+          '<svg width="36" height="36" viewBox="-28 -28 56 56"><rect x="-18" y="-8" width="36" height="28" rx="3" fill="#E7B960"/><rect x="-21" y="-14" width="42" height="8" rx="2" fill="#EBDDC8"/><rect x="-3" y="-14" width="6" height="34" fill="#FFFAF0"/><path d="M0 -14 C-16 -32 -20 -12 0 -14 C16 -32 20 -12 0 -14" stroke="#FFFAF0" stroke-width="3" fill="none"/></svg>' +
           "</span></span>";
         btn.addEventListener("focus", function () {
           focusIdx = idx;
