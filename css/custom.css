@@ -1045,6 +1045,17 @@ ol {
   border-color: var(--gold);
 }
 
+/* Excepción: la ventana con el regalo activo se marca en rojo. */
+.window-btn.is-gift-active {
+  border-color: #c62828;
+  background: #c62828;
+}
+
+.window-btn.is-gift-active:focus-visible {
+  border-color: #c62828;
+  outline-color: #c62828;
+}
+
 .window-num {
   position: absolute;
   left: 0.5rem;
