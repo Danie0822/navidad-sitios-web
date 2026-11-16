@@ -102,10 +102,9 @@
       if (elMins) elMins.textContent = pad(state.minutes);
       if (elSecs) elSecs.textContent = pad(state.seconds);
       if (elTarget) {
+        /* Misma firma que React Countdown: toLocaleDateString() sin locale (Chromium → 12/25/…). */
         elTarget.textContent =
-          "Objetivo " +
-          state.target.toLocaleDateString("es-AR") +
-          " 00:00 (hora local)";
+          "Objetivo " + state.target.toLocaleDateString() + " 00:00 (hora local)";
       }
       if (elDone) {
         elDone.hidden = !state.isChristmasDay;

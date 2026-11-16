@@ -353,9 +353,28 @@ hr {
 .btn-ghost:hover {
   background: var(--surface);
 }
-.btn-cta:active,
-.btn-ghost:active {
+.btn-cta:active:not(:disabled),
+.btn-ghost:active:not(:disabled) {
   transform: scale(0.98);
+}
+.btn-cta:disabled,
+.btn-ghost:disabled {
+  opacity: 1;
+  background: var(--surface);
+  color: var(--forest);
+  border-color: var(--line);
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.cta-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+.gap-2 {
+  gap: 0.5rem;
 }
 
 .site-footer {
@@ -410,6 +429,30 @@ hr {
   display: block;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.snowfall-box {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+  clip-path: path("M0 620 V288 A300 288 0 0 1 600 288 V620 Z");
+}
+
+.snow-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.arch-pause {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Countdown */
@@ -543,13 +586,6 @@ html.dark .field::placeholder {
   flex-shrink: 0;
   accent-color: var(--cta);
   cursor: pointer;
-}
-
-/* Galería */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
 }
 
 .media-block {
@@ -819,10 +855,6 @@ ol {
     gap: 0.5rem;
   }
 
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
-
   @keyframes gift-cycle {
     0%,
     100% {
@@ -852,10 +884,6 @@ ol {
 
   .game-cards {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .gallery-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -1283,4 +1311,9 @@ ol {
 [data-motion="paused"] .motion-on .anim-window,
 [data-motion="paused"] .motion-on .anim-gift-lid,
 [data-motion="paused"] .motion-on .anim-card-a,
-[data-motion="paused"] .motion-on .anim-card-b { animation-play-state: paused; }
+[data-motion="paused"] .motion-on .anim-card-b,
+[data-motion="paused"] .motion-on .anim-branch-l,
+[data-motion="paused"] .motion-on .anim-branch-r,
+[data-motion="paused"] .motion-on .anim-spark {
+  animation-play-state: paused;
+}

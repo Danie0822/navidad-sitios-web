@@ -170,12 +170,44 @@ async function main() {
       }
       await page.locator("#theme-toggle").click();
 
+      if (path === "/" || path.endsWith("/")) {
+        await page.setViewportSize({ width: 1280, height: 900 });
+        const snow = await page.locator("#snowfall-canvas").count();
+        const pause = page.locator("[data-motion-pause]");
+        if (snow < 1) {
+          failed = true;
+          report.push("index: falta canvas de nieve");
+        }
+        if ((await pause.count()) < 1) {
+          failed = true;
+          report.push("index: falta Pausar animaciones");
+        } else {
+          await pause.first().click();
+          const pressed = await pause.first().getAttribute("aria-pressed");
+          const motion = await page.evaluate(() => document.documentElement.dataset.motion);
+          if (pressed !== "true" || motion !== "paused") {
+            failed = true;
+            report.push(`index: pausa no aplicó (aria=${pressed} motion=${motion})`);
+          } else {
+            report.push("index: nieve + pausa OK");
+          }
+          await pause.first().click();
+        }
+      }
+
       if (path.includes("tarjetas")) {
         await page.setViewportSize({ width: 1280, height: 900 });
         const disabled = await page.locator("#download-png").isDisabled();
         if (!disabled) {
           failed = true;
           report.push("tarjetas: Descargar PNG debería estar disabled vacío");
+        }
+        const disabledBg = await page.locator("#download-png").evaluate((el) => getComputedStyle(el).backgroundColor);
+        if (disabledBg === "rgb(167, 44, 54)") {
+          failed = true;
+          report.push(`tarjetas: disabled se ve como CTA activo (${disabledBg})`);
+        } else {
+          report.push(`tarjetas: disabled style OK (${disabledBg})`);
         }
         const help = await page.locator("#download-help").textContent();
         if (!/destinatario y mensaje/i.test(help || "")) {
@@ -263,6 +295,16 @@ async function main() {
         if (!catalogVisible || catCount !== 2) {
           failed = true;
           report.push(`juegos: selector esperado 2 links, got ${catCount}`);
+        }
+        const windows = await page.locator("#catalog-regalos .catalog-svg > g").count();
+        if (windows < 9) {
+          failed = true;
+          report.push(`juegos: catálogo regalos ventanas=${windows}, esperado ≥9`);
+        }
+        const catPause = page.locator("#view-catalog [data-motion-pause]");
+        if ((await catPause.count()) < 1) {
+          failed = true;
+          report.push("juegos: falta PauseButton en catálogo");
         }
 
         await page.locator("#catalog-memoria").click();
