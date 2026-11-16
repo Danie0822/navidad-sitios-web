@@ -853,6 +853,13 @@ ol {
   outline-offset: 3px;
 }
 
+/* FocusHeading: el foco programático no activa :focus-visible; usar :focus. */
+main h1[tabindex="-1"]:focus {
+  outline: 3px solid var(--cta);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
 ::selection {
   background: var(--forest);
   color: var(--bg-ivory);
@@ -1241,8 +1248,9 @@ ol {
 }
 .catalog-link:focus { outline: none; }
 .catalog-link:focus-visible { outline: 3px solid var(--cta); outline-offset: 3px; }
-.catalog-art { border-radius: 16px; overflow: hidden; }
-.catalog-svg { width: 100%; height: auto; display: block; }
+/* overflow visible: no clippear arabescos del SVG Memoria (y≈430). El rx del rect SVG redondea. */
+.catalog-art { border-radius: 16px; overflow: visible; }
+.catalog-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .back-link { padding-left: 0; color: var(--cta); }
 .mb-4 { margin-bottom: 1rem; }
 .mt-5 { margin-top: 1.25rem; }

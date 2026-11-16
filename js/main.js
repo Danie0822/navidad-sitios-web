@@ -7,27 +7,39 @@
   initFocusHeading();
   initCountdown();
 
-  /** Enfoca el H1 visible al cargar (sin desplazar la página). */
+  /** Enfoca el H1 visible tras el paint (sin desplazar la página). */
   function initFocusHeading() {
-    var headings = document.querySelectorAll("main h1[tabindex='-1']");
-    var target = null;
-    for (var i = 0; i < headings.length; i++) {
-      var h = headings[i];
-      var section = h.closest("section");
-      if (section && section.hidden) continue;
-      target = h;
-      break;
-    }
-    if (!target) return;
-    try {
-      target.focus({ preventScroll: true, focusVisible: true });
-    } catch (err) {
+    function focusVisibleHeading() {
+      var headings = document.querySelectorAll("main h1[tabindex='-1']");
+      var target = null;
+      for (var i = 0; i < headings.length; i++) {
+        var h = headings[i];
+        var section = h.closest("section");
+        if (section && section.hidden) continue;
+        target = h;
+        break;
+      }
+      if (!target) return;
       try {
-        target.focus({ preventScroll: true });
-      } catch (err2) {
-        target.focus();
+        target.focus({ preventScroll: true, focusVisible: true });
+      } catch (err) {
+        try {
+          target.focus({ preventScroll: true });
+        } catch (err2) {
+          target.focus();
+        }
       }
     }
+    // Tras el primer paint; si el documento aún carga, espera load.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (document.readyState === "complete") {
+          focusVisibleHeading();
+        } else {
+          window.addEventListener("load", focusVisibleHeading, { once: true });
+        }
+      });
+    });
   }
 
   /** Menú hamburguesa con aria-expanded, Escape y foco. */

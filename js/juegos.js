@@ -23,10 +23,22 @@
       regalos.hidden = view !== "regalos";
       if (view === "memoria") {
         var h = document.getElementById("heading-memoria");
-        if (h) h.focus();
+        if (h) {
+          try {
+            h.focus({ preventScroll: true, focusVisible: true });
+          } catch (err) {
+            h.focus({ preventScroll: true });
+          }
+        }
       } else if (view === "regalos") {
         var hr = document.getElementById("heading-regalos");
-        if (hr) hr.focus();
+        if (hr) {
+          try {
+            hr.focus({ preventScroll: true, focusVisible: true });
+          } catch (err2) {
+            hr.focus({ preventScroll: true });
+          }
+        }
       } else {
         var from = sessionStorage.getItem("villa-from-game");
         var focusMem = document.getElementById("catalog-memoria");
