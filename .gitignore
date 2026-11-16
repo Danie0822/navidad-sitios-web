@@ -1,0 +1,9 @@
+# Propósito: ignorar dependencias y basura local; styles.css compilado SÍ se versiona.
+node_modules/
+.DS_Store
+*.log
+.playwright/
+test-results/
+playwright-report/
+_site/
+.cache/

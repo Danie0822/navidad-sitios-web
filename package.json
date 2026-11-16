@@ -1,0 +1,22 @@
+{
+  "name": "villa-navidad",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Villa Navidad — sitio estático HTML + CSS + JS con Tailwind CLI",
+  "scripts": {
+    "css:build": "npx @tailwindcss/cli -i ./css/input.css -o ./css/styles.css --minify && node -e \"const fs=require('fs');const p='css/styles.css';fs.writeFileSync(p,'/* Propósito: Tailwind compilado con CLI desde css/input.css (no editar a mano). */\\n'+fs.readFileSync(p,'utf8'))\"",
+    "css:watch": "npx @tailwindcss/cli -i ./css/input.css -o ./css/styles.css --watch",
+    "preview:pages": "node scripts/preview-pages.mjs",
+    "test:countdown": "node scripts/test-countdown.mjs",
+    "test:cards": "node scripts/test-cards.mjs",
+    "test:games": "node scripts/test-games.mjs",
+    "html:validate": "html-validate index.html tarjetas.html juegos.html participantes.html",
+    "verify": "node scripts/verify.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@tailwindcss/cli": "^4.1.0",
+    "html-validate": "^11.21.1",
+    "tailwindcss": "^4.1.0"
+  }
+}

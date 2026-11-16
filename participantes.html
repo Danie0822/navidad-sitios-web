@@ -1,0 +1,140 @@
+<!-- Propósito: créditos de participantes y multimedia del sitio. -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Participantes</title>
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/custom.css">
+  </head>
+  <body class="page-enter">
+    <header class="site-header">
+      <nav class="site-nav page-shell" aria-label="Principal">
+        <a class="brand-mark" href="./index.html">
+          <span class="brand-diamond" aria-hidden="true"></span>
+          Villa Navidad
+        </a>
+        <div class="nav-end">
+          <div id="nav-links" class="nav-links">
+            <a class="nav-link" data-page="index.html" href="./index.html">Inicio</a>
+            <a class="nav-link" data-page="tarjetas.html" href="./tarjetas.html">Tarjetas</a>
+            <a class="nav-link" data-page="juegos.html" href="./juegos.html">Juegos</a>
+            <a class="nav-link" data-page="participantes.html" href="./participantes.html">Participantes</a>
+          </div>
+          <div class="nav-actions">
+            <button
+              type="button"
+              id="menu-toggle"
+              class="menu-toggle"
+              aria-controls="nav-links"
+              aria-expanded="false"
+              aria-label="Abrir menú"
+            >
+              <span class="menu-toggle-bars" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-shell py-8 sm:py-10">
+      <section aria-labelledby="heading-participantes">
+        <h1 id="heading-participantes">Participantes</h1>
+        <p class="lead">
+          Autores de esta entrega:
+          <strong>Daniel</strong>
+          y
+          <em>Oscar</em>.
+          <small>Sin otros datos personales.</small>
+        </p>
+        <br>
+        <p>Villa Navidad se hizo en HTML, CSS y JavaScript puros.</p>
+
+        <h2>Créditos</h2>
+        <ul>
+          <li>Daniel</li>
+          <li>Oscar</li>
+        </ul>
+
+        <h3>Multimedia</h3>
+        <p>Video y audio libres del repo (no reemplazan tarjetas ni juegos).</p>
+        <div class="media-block">
+          <video controls preload="metadata" poster="./img/luces.jpg" width="480" height="270">
+            <source src="./media/villa-navidad.mp4" type="video/mp4">
+            Tu navegador no reproduce video HTML5.
+          </video>
+        </div>
+        <div class="media-block">
+          <audio id="participantes-audio" controls preload="metadata">
+            <source src="./media/campana.mp3" type="audio/mpeg">
+            Tu navegador no reproduce audio HTML5.
+          </audio>
+          <p class="field-hint">
+            <button type="button" id="participantes-audio-btn" class="btn-ghost btn-compact">Reproducir campana</button>
+          </p>
+        </div>
+
+        <h4>Imagen como vínculo</h4>
+        <p>Tocá la foto para volver al inicio:</p>
+        <a href="./index.html" title="Volver al inicio">
+          <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente navideño — enlace al inicio" width="160" height="120">
+        </a>
+
+        <hr>
+
+        <h5>Confirmación educativa</h5>
+        <form id="participantes-form" action="#" method="post">
+          <div class="form-row">
+            <label for="nota"><strong>Nota opcional</strong></label>
+            <input
+              class="field"
+              type="text"
+              id="nota"
+              name="nota"
+              placeholder="Un comentario corto (opcional)">
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="confirmacion" name="confirmacion">
+            <label for="confirmacion">
+              Confirmo que esta página es solo material educativo.
+              <small>(No se envía a ningún servidor.)</small>
+            </label>
+          </div>
+          <p id="error-confirmacion" class="form-error" role="alert"></p>
+          <button type="submit" class="btn-cta">Guardar confirmación</button>
+          <p id="participantes-success" class="form-success" role="status"></p>
+        </form>
+
+        <div id="box-demo" class="mt-6">
+          <h6>Modelo de caja</h6>
+          <p>
+            Este bloque usa <strong>box-sizing: border-box</strong>: el padding y el borde
+            cuentan dentro del ancho.
+          </p>
+        </div>
+
+        <h6>Pasos del proyecto</h6>
+        <ol>
+          <li>Inicio, tarjetas y juegos listos.</li>
+          <li>Multimedia y créditos en esta página.</li>
+          <li>Publicación estática en GitHub Pages.</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer page-shell">
+      <p>Villa Navidad — con cariño. Sin cuentas.</p>
+      <p>
+        Enlace externo:
+        <a href="https://es.wikipedia.org/wiki/Navidad" rel="noopener noreferrer" target="_blank">Navidad en Wikipedia</a>
+      </p>
+    </footer>
+
+    <script src="./js/countdown-logic.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/nav-current.js"></script>
+    <script src="./js/participantes.js"></script>
+  </body>
+</html>

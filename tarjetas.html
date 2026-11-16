@@ -1,0 +1,147 @@
+<!-- Propósito: taller de tarjetas navideñas (plantillas, preview y PNG). -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Villa Navidad — Tarjetas</title>
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/custom.css">
+  </head>
+  <body class="page-enter">
+    <header class="site-header">
+      <nav class="site-nav page-shell" aria-label="Principal">
+        <a class="brand-mark" href="./index.html">
+          <span class="brand-diamond" aria-hidden="true"></span>
+          Villa Navidad
+        </a>
+        <div class="nav-end">
+          <div id="nav-links" class="nav-links">
+            <a class="nav-link" data-page="index.html" href="./index.html">Inicio</a>
+            <a class="nav-link" data-page="tarjetas.html" href="./tarjetas.html">Tarjetas</a>
+            <a class="nav-link" data-page="juegos.html" href="./juegos.html">Juegos</a>
+            <a class="nav-link" data-page="participantes.html" href="./participantes.html">Participantes</a>
+          </div>
+          <div class="nav-actions">
+            <button
+              type="button"
+              id="menu-toggle"
+              class="menu-toggle"
+              aria-controls="nav-links"
+              aria-expanded="false"
+              aria-label="Abrir menú"
+            >
+              <span class="menu-toggle-bars" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-shell py-8 sm:py-10">
+      <section aria-labelledby="heading-tarjetas">
+        <h1 id="heading-tarjetas" tabindex="-1">Un poquito de vos, en una tarjeta.</h1>
+        <p class="lead">Elegí un diseño, escribí algo lindo y llevátelo en PNG.</p>
+
+        <div class="editor-grid mt-8">
+          <form id="tarjeta-form" action="#" method="post">
+            <input type="hidden" id="plantilla" name="plantilla" value="villa">
+
+            <fieldset>
+              <legend class="fieldset-title">Elegí tu diseño</legend>
+              <div class="template-picks" role="group" aria-label="Plantillas">
+                <button type="button" class="template-pick is-selected" data-template="villa" aria-pressed="true">
+                  <span class="thumb-art" data-thumb="villa" aria-hidden="true"></span>
+                  <span class="template-label">Villa <span class="chosen-mark">Elegido</span></span>
+                </button>
+                <button type="button" class="template-pick" data-template="bosque" aria-pressed="false">
+                  <span class="thumb-art" data-thumb="bosque" aria-hidden="true"></span>
+                  <span class="template-label">Bosque <span class="chosen-mark" hidden>Elegido</span></span>
+                </button>
+                <button type="button" class="template-pick" data-template="regalos" aria-pressed="false">
+                  <span class="thumb-art" data-thumb="regalos" aria-hidden="true"></span>
+                  <span class="template-label">Regalos <span class="chosen-mark" hidden>Elegido</span></span>
+                </button>
+              </div>
+            </fieldset>
+
+            <div class="form-row">
+              <label for="dest" class="field-label"><strong>Para</strong></label>
+              <input
+                class="field"
+                type="text"
+                id="dest"
+                name="destinatario"
+                maxlength="120"
+                placeholder="Ej. Daniela"
+                autocomplete="off">
+              <p id="count-dest" class="field-hint">0/120</p>
+            </div>
+
+            <div class="form-row">
+              <label for="msg" class="field-label"><strong>Tu mensaje</strong></label>
+              <textarea
+                class="field field-tall"
+                id="msg"
+                name="mensaje"
+                rows="5"
+                maxlength="600"
+                placeholder="Tu saludo navideño…"
+              ></textarea>
+              <p id="count-msg" class="field-hint">0/600</p>
+            </div>
+
+            <p class="field-hint">Los saltos de línea también son parte del regalo.</p>
+            <p class="field-hint">Sin cuentas. Sin apuro. Con cariño.</p>
+            <button type="submit" class="sr-only">Descargar PNG</button>
+          </form>
+
+          <aside class="studio" id="vista-previa">
+            <div class="studio-head">
+              <p class="studio-title">Vista previa</p>
+              <button type="button" id="preview-pause" class="btn-ghost btn-compact" aria-pressed="false">
+                Pausar animación
+              </button>
+            </div>
+            <div id="card-preview-frame" class="card-preview-frame" data-motion="play" data-preview="live" data-fits="true">
+              <div class="card-scale">
+                <div id="card-preview-live" class="card-art"></div>
+              </div>
+            </div>
+            <p class="field-hint text-center">PNG cuadrado · 1080 × 1080 · sin animación</p>
+            <p id="png-ready" class="text-center studio-ready" hidden>PNG listo</p>
+          </aside>
+        </div>
+
+        <div class="download-bar">
+          <p class="field-hint">El archivo conserva tu texto y diseño.</p>
+          <div class="download-actions">
+            <button type="button" id="download-png" class="btn-cta" disabled>Descargar PNG</button>
+            <p id="download-help" class="field-hint">Escribí destinatario y mensaje para descargar.</p>
+          </div>
+        </div>
+
+        <div class="export-host" aria-hidden="true">
+          <div id="card-export" class="card-art"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer page-shell">
+      <p>Villa Navidad — con cariño. Sin cuentas.</p>
+      <p>
+        Enlace externo:
+        <a href="https://unsplash.com/license" rel="noopener noreferrer" target="_blank">Licencia Unsplash</a>
+      </p>
+    </footer>
+
+    <script src="./js/vendor/html-to-image.js"></script>
+    <script src="./js/countdown-logic.js"></script>
+    <script src="./js/card-logic.js"></script>
+    <script src="./js/card-preview.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/nav-current.js"></script>
+    <script src="./js/form.js"></script>
+  </body>
+</html>
