@@ -1,105 +1,99 @@
-# Villa Navidad — SPA React + Vite (ES)
+# Villa Navidad — HTML + CSS + JS (estático)
 
-Villa Navidad es una SPA sencilla (sin backend) con:
-- Landing navideña protagonista (arco aprobado, teatro del regalo, nieve confinada)
-- Cuenta regresiva a la próxima Navidad
-- Taller de tarjetas con tres composiciones (Villa, Bosque, Regalos) y PNG 1080×1080
-- Catálogo de exactamente dos juegos: Memoria y Regalos escondidos
+Sitio educativo en **HTML, CSS y JavaScript puros**, con **Tailwind CSS compilado por CLI** (sin CDN).  
+Diseño editorial aprobado: paleta marfil / verde bosque / granate, arco, tipografía Fraunces + Inter, animaciones suaves.
 
-Todo el contenido y la UI están en español. No usa APIs pagadas, login, ni BD.
+Publicable en GitHub Pages bajo `/navidad-sitios-web/`.
 
 ## Requisitos
-- Node.js 18+ (probado con Node 22)
+
+- Node.js 18+
 - npm
 
 ## Instalación
+
 ```bash
 npm install
 ```
 
-## Ejecutar en desarrollo
+## Recompilar Tailwind
+
+El CSS compilado vive en `css/styles.css` y **está versionado** (Pages lo sirve sin build).  
+Para regenerarlo tras cambiar clases en el HTML:
+
 ```bash
-npm run dev
+npm run css:build
 ```
-Abre `http://localhost:5173` en el navegador.
 
-## Compilar producción
+Modo observación:
+
 ```bash
-npm run build
-npm run preview
-```
-Para GitHub Pages (ruta base /navidad-sitios-web/):
-- El build de producción usa base `/navidad-sitios-web/` automáticamente.
-- SPA fallback incluido en `public/404.html` para recargas profundas.
-- Router usa `basename = import.meta.env.BASE_URL`.
-
-## Estructura principal
-```
-src/villa/
-  App.tsx
-  main.tsx
-  styles.css
-  components/
-    Countdown.tsx
-    Snowfall.tsx
-    FocusHeading.tsx
-    cards/
-    catalog/
-    scene/ChristmasSceneScout.tsx
-  games/
-    MemoryGame.tsx
-    HiddenGiftsGame.tsx
-  icons/
-  motion/
-  pages/
-    Landing.tsx
-    Tarjetas.tsx
-    Juegos.tsx
-    MemoriaPage.tsx
-    RegalosPage.tsx
-    NotFound.tsx
+npm run css:watch
 ```
 
-## Convenciones
-- Código simple y reutilizable, con un breve comentario al inicio de cada archivo.
-- Accesibilidad: foco visible, teclado/táctil, contraste AA, `prefers-reduced-motion`.
-- Pausa de animación de sesión; reduced-motion entrega pose estática.
+## Vista previa como GitHub Pages
 
-## Tarjetas
-- Plantillas distintas: Villa (granate + paisaje), Bosque (marfil + ramas), Regalos (verde + lazo).
-- PNG canónico 1080×1080, estático, solo la tarjeta. Guía de longitud 40/200; el campo admite más y avisa si no entra visualmente. No se trunca en silencio.
-- Placeholders con contraste compuesto ≥4.5 (mismo criterio que PR #2, `rgba(24,60,50,0.82)`).
-
-## Juegos
-- `/juegos` catálogo de dos tarjetas ilustradas.
-- `/juegos/memoria` — 8 siluetas × 2, 16 cartas, parejas/8.
-- `/juegos/regalos` — 9 ventanas, ronda 30s, aparición 1.8s, intervalo 350ms.
-
-## Relación con PR2
-Este trabajo (Scout V2) va en un PR nuevo, separado del PR #2 de contraste de placeholder. Incorpora el mismo arreglo de `::placeholder` para no dejar pendiente el FAIL 2.85:1. No fusiona ni cierra el PR2.
-
-## Interpretación temporal del contador
-- Navidad: 25 de diciembre a las 00:00:00 hora local.
-- Si ya es 25/dic, el objetivo pasa al año siguiente.
-
-## Pruebas
 ```bash
-npm run build
-npm run test:e2e
-node scripts/pack-evidence.mjs
+npm run preview:pages
 ```
 
-## Publicación en GitHub Pages (no en este PR)
-- Workflow: `.github/workflows/deploy-pages.yml` (solo `main`).
-- No se cambia Settings ni se relanza deploy desde esta rama.
+Abrí `http://localhost:4173/navidad-sitios-web/`.
+
+## Estructura
+
+```
+/
+  index.html          # Inicio
+  tarjetas.html       # Taller + formulario
+  juegos.html         # Juegos + galería / media
+  css/
+    input.css         # Entrada Tailwind CLI
+    styles.css        # Tailwind compilado (commitear)
+    custom.css        # CSS propio (tokens, layout, animaciones)
+  js/
+    main.js           # Menú, modo oscuro, countdown
+    form.js           # Validación de formulario
+    nav-current.js    # aria-current de navegación
+  img/                # Imágenes libres
+  media/              # Video y audio livianos
+  fonts/              # WOFF2 autohospedados (OFL)
+```
+
+## Funcionalidades JS
+
+1. Menú hamburguesa (`aria-expanded`)
+2. Validación de formulario (tarjetas)
+3. Modo oscuro persistente (`localStorage`)
+4. Cuenta regresiva a Navidad (25/dic 00:00 hora local)
+
+## Créditos y licencias de assets
+
+| Archivo | Origen | Licencia |
+| --- | --- | --- |
+| `img/arbol-navidad.jpg` | [Unsplash — Christmas tree](https://unsplash.com/photos/christmas-tree-with-string-lights-1512389142860) (photo-1512389142860-9c449e58a543) | [Unsplash License](https://unsplash.com/license) (uso libre) |
+| `img/regalos.jpg` | [Unsplash — gifts](https://unsplash.com/photos/wrapped-gift-boxes-1512909006721) (photo-1512909006721-3d6018887383) | Unsplash License |
+| `img/luces.jpg` | [Unsplash — lights](https://unsplash.com/photos/selective-focus-photography-of-christmas-lights-1482517967863) (photo-1482517967863-00e15c9b44be) | Unsplash License |
+| `img/ambiente.jpg` | [Unsplash — ornaments](https://unsplash.com/photos/red-and-gold-bauble-1607344645866) (photo-1607344645866-009c320b63e0) | Unsplash License |
+| `img/favicon.svg` | Original del repo | CC0 / dominio público del proyecto |
+| `media/villa-navidad.mp4` | Montaje propio a partir de las fotos Unsplash del repo | Derivado bajo Unsplash License |
+| `media/campana.mp3` | Audio sintético original (ffmpeg / sine) | CC0 del proyecto |
+| `fonts/*.woff2` | [Fontsource](https://fontsource.org/) — Inter y Fraunces | SIL Open Font License 1.1 (texto completo en [`fonts/OFL.txt`](fonts/OFL.txt), con copyright de Inter y Fraunces) |
+
+Nada de servicios pagos. Video &lt; 3 MB, audio &lt; 1 MB.
+
+## Fuentes (OFL)
+
+Las WOFF2 de Inter y Fraunces se distribuyen bajo la **SIL Open Font License 1.1**.  
+La licencia completa está en `fonts/OFL.txt`.
+
+## GitHub Pages
+
+Workflow: `.github/workflows/deploy-pages.yml` (rama `main`).  
+Copia HTML + `css` + `js` + `img` + `media` + `fonts` sin Vite.
 
 ## Scripts
-- `npm run dev`, `npm run build`, `npm run preview`, `npm run lint`
-- `npm run preview:pages`: sirve `dist` en `/navidad-sitios-web/` para Playwright
-- `npm run test:e2e`
 
-## Licencias de guías (consulta local)
-Emil (MIT) e Impeccable (Apache-2.0) como referencia conceptual. Taste solo referencia privada, sin redistribuir. Sin motores, hooks ni APIs pagas.
-
-## Estado
-Propuesta V2 implementada para revisión independiente. No producción. Sin merge ni publicación desde este PR.
+- `npm run css:build` — compilar Tailwind a `css/styles.css`
+- `npm run css:watch` — recompilar al guardar
+- `npm run preview:pages` — servir bajo `/navidad-sitios-web/`
+- `npm run verify` — comprobaciones Playwright + grep de la rúbrica

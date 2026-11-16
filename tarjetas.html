@@ -1,0 +1,169 @@
+<!-- Propósito: taller de tarjetas con formulario validado y galería de inspiración. -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./js/theme-init.js"></script>
+    <title>Villa Navidad — Tarjetas</title>
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/custom.css">
+  </head>
+  <body class="page-enter">
+    <header class="site-header">
+      <nav class="site-nav page-shell" aria-label="Principal">
+        <a class="brand-mark" href="./index.html">
+          <span class="brand-diamond" aria-hidden="true"></span>
+          Villa Navidad
+        </a>
+        <div class="nav-end">
+          <div id="nav-links" class="nav-links">
+            <a class="nav-link" data-page="index.html" href="./index.html">Inicio</a>
+            <a class="nav-link" data-page="tarjetas.html" href="./tarjetas.html">Tarjetas</a>
+            <a class="nav-link" data-page="juegos.html" href="./juegos.html">Juegos</a>
+          </div>
+          <div class="nav-actions">
+            <button type="button" id="theme-toggle" class="btn-icon" aria-pressed="false" aria-label="Cambiar a modo oscuro">
+              Tema
+            </button>
+            <button
+              type="button"
+              id="menu-toggle"
+              class="menu-toggle"
+              aria-controls="nav-links"
+              aria-expanded="false"
+              aria-label="Abrir menú"
+            >
+              <span class="menu-toggle-bars" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-shell py-8 sm:py-10">
+      <section aria-labelledby="heading-tarjetas">
+        <h1 id="heading-tarjetas">Un poquito de vos, en una tarjeta.</h1>
+        <p class="lead">Elegí un diseño, escribí algo lindo y llevátelo como recuerdo.</p>
+
+        <div class="cards-grid mt-8">
+          <div class="studio">
+            <h2>Taller</h2>
+            <p>Completá el formulario. Validamos en el navegador, sin servidor.</p>
+
+            <form id="tarjeta-form" action="#" method="post">
+              <div class="form-row">
+                <label for="destinatario"><strong>Para</strong></label>
+                <input
+                  class="field"
+                  type="text"
+                  id="destinatario"
+                  name="destinatario"
+                  placeholder="Nombre de quien recibe"
+                  autocomplete="name">
+                <p id="error-destinatario" class="form-error" role="alert"></p>
+              </div>
+
+              <div class="form-row">
+                <label for="mensaje"><em>Mensaje</em></label>
+                <textarea
+                  class="field"
+                  id="mensaje"
+                  name="mensaje"
+                  rows="4"
+                  placeholder="Escribí un deseo corto y cálido…"
+                ></textarea>
+                <p id="error-mensaje" class="form-error" role="alert"></p>
+              </div>
+
+              <div class="form-row">
+                <label for="estilo">Estilo preferido</label>
+                <select class="field" id="estilo" name="estilo">
+                  <option value="villa">Villa (granate)</option>
+                  <option value="bosque">Bosque (marfil)</option>
+                  <option value="regalos">Regalos (verde)</option>
+                </select>
+              </div>
+
+              <div class="checkbox-row">
+                <input type="checkbox" id="consentimiento" name="consentimiento">
+                <label for="consentimiento">
+                  Confirmo que este mensaje es solo una demo educativa.
+                  <small>(No se envía a ningún servidor.)</small>
+                </label>
+              </div>
+              <p id="error-consentimiento" class="form-error" role="alert"></p>
+
+              <button type="submit" class="btn-cta">Guardar pedido simbólico</button>
+              <button type="reset" class="btn-ghost">Limpiar</button>
+            </form>
+
+            <p id="form-success" class="form-success" role="status"></p>
+          </div>
+
+          <div>
+            <h2>Inspiración</h2>
+            <p>Imágenes como vínculos a la galería de juegos:</p>
+            <div class="gallery-grid mt-4">
+              <a href="./juegos.html#galeria" title="Ver galería — árbol">
+                <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Árbol de Navidad iluminado" width="160" height="120">
+              </a>
+              <a href="./juegos.html#galeria" title="Ver galería — regalos">
+                <img class="img-thumb" src="./img/regalos.jpg" alt="Regalos envueltos con lazo" width="160" height="120">
+              </a>
+              <a href="./juegos.html#galeria" title="Ver galería — luces">
+                <img class="img-thumb" src="./img/luces.jpg" alt="Luces navideñas borrosas" width="160" height="120">
+              </a>
+              <a href="./juegos.html#galeria" title="Ver galería — ambiente">
+                <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente navideño cálido" width="160" height="120">
+              </a>
+            </div>
+
+            <div id="box-demo" class="mt-6">
+              <h3>Modelo de caja</h3>
+              <p>
+                Este bloque usa <strong>box-sizing: border-box</strong>: el padding y el borde
+                cuentan dentro del ancho.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr>
+
+      <section aria-labelledby="heading-pasos">
+        <h2 id="heading-pasos">Pasos sugeridos</h2>
+        <ol>
+          <li>Pensá a quién le dedicás la tarjeta.</li>
+          <li>Elegí el tono: villa, bosque o regalos.</li>
+          <li>Revisá el mensaje en voz alta.</li>
+        </ol>
+        <h3>Consejo rápido</h3>
+        <ul>
+          <li>Menos es más: una frase basta.</li>
+          <li>Usá <em>vos</em> si escribís para alguien cercano.</li>
+        </ul>
+        <h4>Accesibilidad</h4>
+        <p>Los errores del formulario se anuncian con <code>role="alert"</code>.</p>
+        <h5>Pie de sección</h5>
+        <p><small>Textos reutilizados del taller Scout V2.</small></p>
+      </section>
+    </main>
+
+    <footer class="site-footer page-shell">
+      <p>Villa Navidad — con cariño. Sin cuentas.</p>
+      <p>
+        <a href="./index.html">Volver al inicio</a>
+        ·
+        <a href="https://unsplash.com/license" rel="noopener noreferrer" target="_blank">Licencia Unsplash</a>
+      </p>
+    </footer>
+
+    <script src="./js/countdown-logic.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/nav-current.js"></script>
+    <script src="./js/form.js"></script>
+  </body>
+</html>

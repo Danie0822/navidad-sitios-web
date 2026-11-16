@@ -1,0 +1,7 @@
+/* Propósito: entrada de Tailwind CLI; se compila a styles.css. */
+@import "tailwindcss";
+@source "../index.html";
+@source "../tarjetas.html";
+@source "../juegos.html";
+@source "../js/**/*.js";
+/* theme-init / countdown-logic no aportan clases Tailwind */

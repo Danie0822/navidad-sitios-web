@@ -1,42 +1,20 @@
 {
-  "name": "workspace",
+  "name": "villa-navidad",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "Villa Navidad — sitio estático HTML + CSS + JS con Tailwind CLI",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview",
+    "css:build": "npx @tailwindcss/cli -i ./css/input.css -o ./css/styles.css --minify && node -e \"const fs=require('fs');const p='css/styles.css';fs.writeFileSync(p,'/* Propósito: Tailwind compilado con CLI desde css/input.css (no editar a mano). */\\n'+fs.readFileSync(p,'utf8'))\"",
+    "css:watch": "npx @tailwindcss/cli -i ./css/input.css -o ./css/styles.css --watch",
     "preview:pages": "node scripts/preview-pages.mjs",
-    "test:e2e": "playwright test",
-    "pack:evidence": "node scripts/pack-evidence.mjs"
-  },
-  "dependencies": {
-    "@fontsource/fraunces": "^5.3.0",
-    "@fontsource/inter": "^5.3.0",
-    "clsx": "^2.1.1",
-    "html-to-image": "^1.11.13",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "react-router-dom": "^7.18.5"
+    "test:countdown": "node scripts/test-countdown.mjs",
+    "html:validate": "html-validate index.html tarjetas.html juegos.html",
+    "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.0",
-    "@tailwindcss/postcss": "^4.3.5",
-    "@types/node": "^24.19.2",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "autoprefixer": "^10.6.2",
-    "culori": "^3.3.0",
-    "mime": "^4.1.2",
-    "oxlint": "^1.90.0",
-    "pngjs": "^7.0.0",
-    "postcss": "^8.5.32",
-    "tailwindcss": "^4.3.5",
-    "typescript": "~7.0.2",
-    "vite": "^8.3.6",
-    "axe-core": "^4.9.1"
+    "@playwright/test": "^1.49.0",
+    "@tailwindcss/cli": "^4.1.0",
+    "html-validate": "^11.21.1",
+    "tailwindcss": "^4.1.0"
   }
 }
