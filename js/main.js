@@ -7,7 +7,7 @@
   initFocusHeading();
   initCountdown();
 
-  /** Paridad React FocusHeading: enfoca el H1 de la vista visible sin scroll. */
+  /** Enfoca el H1 visible al cargar (sin desplazar la página). */
   function initFocusHeading() {
     var headings = document.querySelectorAll("main h1[tabindex='-1']");
     var target = null;
@@ -90,7 +90,6 @@
       if (elMins) elMins.textContent = pad(state.minutes);
       if (elSecs) elSecs.textContent = pad(state.seconds);
       if (elTarget) {
-        /* Excepción PO aprobada: formato 25/12 (es-AR), no el 12/25 de React. */
         elTarget.textContent =
           "Objetivo " +
           state.target.toLocaleDateString("es-AR") +

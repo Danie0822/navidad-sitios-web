@@ -1,4 +1,4 @@
-/* Propósito: arte DOM de las 3 plantillas React (villa/bosque/regalos) para preview y export. */
+/* Propósito: arte SVG de las plantillas villa/bosque/regalos (preview y PNG). */
 
 (function (global) {
   "use strict";
@@ -96,7 +96,7 @@
     return villaSvg();
   }
 
-  /** Rellena un nodo .card-art con el arte y el texto (modo preview|thumb|export). */
+  /** Pinta la tarjeta en un nodo (modos: preview, thumb o export). */
   function renderCard(root, data, mode) {
     mode = mode || "preview";
     var plantilla = data.plantilla || "villa";

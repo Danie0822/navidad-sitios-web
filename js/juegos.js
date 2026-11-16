@@ -1,4 +1,4 @@
-/* Propósito: catálogo + memoria + regalos (paridad React Juegos/Memoria/Regalos). */
+/* Propósito: catálogo de juegos, memoria y regalos escondidos. */
 
 (function () {
   "use strict";
@@ -10,7 +10,7 @@
   initMemory();
   initGifts();
 
-  /** Cambia entre catálogo / memoria / regalos según el hash (#memoria|#regalos). */
+  /** Muestra catálogo, memoria o regalos según el hash de la URL. */
   function initViews() {
     var catalog = document.getElementById("view-catalog");
     var memoria = document.getElementById("view-memoria");
@@ -86,6 +86,7 @@
     );
   }
 
+  /** Tablero de memoria: voltear, emparejar, pausar y reiniciar. */
   function initMemory() {
     var board = document.getElementById("memory-board");
     if (!board) return;
@@ -195,7 +196,7 @@
         return;
       }
 
-      // Un intento = un par de volteretas; bloquear clics mientras se comparan.
+      // Un intento = dos cartas; bloquear clics mientras se comparan.
       lock = true;
       paint();
       var result = G.resolveMemoryFlip(
@@ -236,6 +237,7 @@
     reset();
   }
 
+  /** Juego de regalos escondidos: ventanas, temporizador y puntaje. */
   function initGifts() {
     var board = document.getElementById("gifts-board");
     if (!board) return;

@@ -26,7 +26,7 @@
     return next;
   }
 
-  /** Crea un mazo de 16 cartas (8 pares) con uid estable. */
+  /** Arma el mazo de 16 cartas (8 pares) y lo mezcla. */
   function makeMemoryDeck(rng) {
     var pairs = [];
     MEMORY_SYMBOLS.forEach(function (s) {
@@ -38,10 +38,7 @@
     });
   }
 
-  /**
-   * Resuelve un intento con dos índices abiertos.
-   * Devuelve { match, pairs, attempts, matched }.
-   */
+  /** Compara dos cartas abiertas y actualiza parejas e intentos. */
   function resolveMemoryFlip(state, a, b) {
     var deck = state.deck;
     var matched = {};
@@ -77,7 +74,7 @@
     };
   }
 
-  /** Suma un punto si la ventana activa no fue capturada aún en esta aparición. */
+  /** Suma un punto si se tocó la ventana con el regalo activo. */
   function captureGift(state, index) {
     if (state.phase !== "playing") return state;
     if (state.active !== index) return state;

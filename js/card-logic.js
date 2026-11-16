@@ -1,4 +1,4 @@
-/* Propósito: validación y límites del taller de tarjetas (paridad React CardEditor). */
+/* Propósito: validación y límites de texto del taller de tarjetas. */
 
 (function (global) {
   "use strict";
@@ -8,10 +8,12 @@
   var HARD_DEST = 120;
   var HARD_MSG = 600;
 
+  /** Recorta el texto al máximo permitido. */
   function clampText(value, max) {
     return String(value || "").slice(0, max);
   }
 
+  /** Exige destinatario y mensaje no vacíos. */
   function validateCard(data) {
     var errors = {};
     var dest = (data.destinatario || "").trim();

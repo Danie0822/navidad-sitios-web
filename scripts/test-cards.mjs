@@ -1,4 +1,4 @@
-/* Propósito: pruebas unitarias de validación del taller (paridad React CardEditor). */
+/* Propósito: pruebas unitarias de validación del taller de tarjetas. */
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
@@ -28,9 +28,9 @@ function run() {
 
   assert(Cards.downloadFileName("bosque") === "tarjeta-navidad-bosque.png", "nombre PNG");
   assert(Cards.clampText("abcdef", 3) === "abc", "clamp texto");
-  assert(Cards.HARD_DEST === 120 && Cards.HARD_MSG === 600, "límites React");
+  assert(Cards.HARD_DEST === 120 && Cards.HARD_MSG === 600, "límites de texto");
 
-  console.log("OK card tests (validación, clamp, límites React)");
+  console.log("OK card tests (validación, clamp, límites)");
 }
 
 run();

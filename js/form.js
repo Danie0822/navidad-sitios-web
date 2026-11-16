@@ -1,4 +1,4 @@
-/* Propósito: CardEditor vanilla — plantillas, preview viva y PNG 1080 vía html-to-image. */
+/* Propósito: formulario de tarjetas, vista previa y descarga PNG 1080. */
 
 (function () {
   "use strict";
@@ -75,6 +75,7 @@
     }
   }
 
+  /** Actualiza preview, miniaturas y estado del botón de descarga. */
   function refresh() {
     var d = data();
     Preview.renderCard(previewHost, d, "preview");
@@ -120,6 +121,7 @@
     }
   }
 
+  /** Genera y descarga el PNG 1080×1080 de la tarjeta. */
   async function handleExport() {
     var d = data();
     var missing = !d.destinatario.trim() || !d.mensaje.trim();

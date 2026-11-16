@@ -1,4 +1,4 @@
-/* Propósito: verificar rúbrica (grep + Playwright headless) bajo /navidad-sitios-web/. */
+/* Propósito: smoke del sitio con Playwright bajo /navidad-sitios-web/. */
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";

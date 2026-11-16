@@ -29,6 +29,7 @@
     });
   }
 
+  /** Activa o desactiva la pausa manual de animaciones. */
   function setPaused(next) {
     paused = !!next;
     syncDataset();
