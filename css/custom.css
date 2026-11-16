@@ -429,30 +429,6 @@ hr {
   display: block;
   width: 100%;
   height: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.snowfall-box {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 2;
-  clip-path: path("M0 620 V288 A300 288 0 0 1 600 288 V620 Z");
-}
-
-.snow-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.arch-pause {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: flex-end;
 }
 
 /* Countdown */

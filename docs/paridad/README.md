@@ -9,11 +9,13 @@ Referencia React (primer padre del merge vanilla `71eab17`):
 1. Las 3 pantallas React (inicio, tarjetas, juegos) quedan en **paridad** de funciones y diseño.
 2. Multimedia y rúbrica que romperían esa paridad viven en **`participantes.html`**.
 3. Nav: solo se suma el enlace a Participantes. Footer: enlace externo.
-## Excepciones PO aprobadas (countdown)
+
+## Excepciones PO aprobadas
 
 | Diferencia vs React | Vanilla (aprobado) | React |
 | --- | --- | --- |
-| Formato de fecha del objetivo | `25/12/AAAA` (`es-AR`) | `12/25/AAAA` (locale default) |
+| Nieve + «Pausar animaciones» en landing | **No** (ítem QA 2 omitido) | `SnowfallBox` + `PauseButton` |
+| Formato de fecha del objetivo | `25/12/AAAA` (`es-AR`) | `12/25/AAAA` |
 | Día 25/12 (00:00 en adelante) | «¡Feliz Navidad!» / 00:00:00:00 | Salta al 25/12 del año siguiente |
 
 ## Tabla React ↔ vanilla
@@ -21,7 +23,6 @@ Referencia React (primer padre del merge vanilla `71eab17`):
 | Pantalla / estado | React | Vanilla |
 | --- | --- | --- |
 | Landing | ![react-landing](./react-landing.png) | ![vanilla-landing](./vanilla-landing.png) |
-| Landing + nieve | ![react-landing-with-snow](./react-landing-with-snow.png) | ![vanilla-landing-with-snow](./vanilla-landing-with-snow.png) |
 | Selector de juegos | ![react-juegos-selector](./react-juegos-selector.png) | ![vanilla-juegos-selector](./vanilla-juegos-selector.png) |
 | Memoria mid-play | ![react-memoria-midplay](./react-memoria-midplay.png) | ![vanilla-memoria-midplay](./vanilla-memoria-midplay.png) |
 | Memoria fin | ![react-memoria-end](./react-memoria-end.png) | ![vanilla-memoria-end](./vanilla-memoria-end.png) |
@@ -35,24 +36,9 @@ Referencia React (primer padre del merge vanilla `71eab17`):
 
 | React | Vanilla |
 | --- | --- |
-| `Landing.tsx` + `SnowfallBox` + `PauseButton` | `index.html` + `js/snowfall.js` + `js/motion.js` |
+| `Landing.tsx` (sin nieve/pausa — excepción PO) | `index.html` + countdown |
 | `Tarjetas` / `CardEditor` / `CardPreview` | `tarjetas.html` + form/preview + html-to-image |
-| `Juegos.tsx` + `PauseButton` + `CatalogRegalosArt` | `juegos.html` `#view-catalog` (grilla 3×3) |
+| `Juegos.tsx` + `PauseButton` + `CatalogRegalosArt` | `juegos.html` `#view-catalog` (grilla 3×3) + `js/motion.js` |
 | `MemoriaPage` / `MemoryGame` | `juegos.html#memoria` |
 | `RegalosPage` / `HiddenGiftsGame` | `juegos.html#regalos` |
 | *(rúbrica multimedia / créditos)* | `participantes.html` |
-
-## Checklist → archivo:línea
-
-| Ítem | Ubicación |
-| --- | --- |
-| Deploy Pages incluye Participantes | `.github/workflows/deploy-pages.yml:30` |
-| Nieve + Pausar animaciones (landing) | `index.html` `#snowfall-host` / `[data-motion-pause]` · `js/snowfall.js` · `js/motion.js` |
-| Catálogo regalos 3×3 | `juegos.html` `#catalog-regalos` (9 `<g>`) |
-| PauseButton catálogo | `juegos.html` `[data-motion-pause]` en `#view-catalog` |
-| PauseButton regalos (partida) | `juegos.html` `#gifts-pause` · `js/juegos.js` |
-| Iconos CTA landing | `index.html` `.cta-icon` en `.hero-ctas` |
-| `#download-png:disabled` | `css/custom.css` `.btn-cta:disabled` |
-| Fecha countdown `25/12` (excepción PO) | `js/main.js` `toLocaleDateString("es-AR")` |
-| «¡Feliz Navidad!» el 25/12 (excepción PO) | `js/countdown-logic.js` + `#cd-done` |
-| Video / audio / img-vínculo / créditos | `participantes.html` |

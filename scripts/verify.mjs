@@ -170,31 +170,6 @@ async function main() {
       }
       await page.locator("#theme-toggle").click();
 
-      if (path === "/" || path.endsWith("/")) {
-        await page.setViewportSize({ width: 1280, height: 900 });
-        const snow = await page.locator("#snowfall-canvas").count();
-        const pause = page.locator("[data-motion-pause]");
-        if (snow < 1) {
-          failed = true;
-          report.push("index: falta canvas de nieve");
-        }
-        if ((await pause.count()) < 1) {
-          failed = true;
-          report.push("index: falta Pausar animaciones");
-        } else {
-          await pause.first().click();
-          const pressed = await pause.first().getAttribute("aria-pressed");
-          const motion = await page.evaluate(() => document.documentElement.dataset.motion);
-          if (pressed !== "true" || motion !== "paused") {
-            failed = true;
-            report.push(`index: pausa no aplicó (aria=${pressed} motion=${motion})`);
-          } else {
-            report.push("index: nieve + pausa OK");
-          }
-          await pause.first().click();
-        }
-      }
-
       if (path.includes("tarjetas")) {
         await page.setViewportSize({ width: 1280, height: 900 });
         const disabled = await page.locator("#download-png").isDisabled();
