@@ -1021,13 +1021,12 @@ main h1[tabindex="-1"]:focus {
   display: block;
 }
 
-/* Tablero Regalos: granate original (excepción al resto del sitio). */
 .windows-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(80px, 1fr));
   gap: 12px;
   max-width: 640px;
-  background: #70232f;
+  background: var(--arch);
   padding: 20px;
   border-radius: 16px;
 }
@@ -1053,6 +1052,17 @@ main h1[tabindex="-1"]:focus {
   border-color: var(--gold);
 }
 
+/* Excepción: la ventana con el regalo activo se marca en rojo. */
+.window-btn.is-gift-active {
+  border-color: #c62828;
+  background: #c62828;
+}
+
+.window-btn.is-gift-active:focus-visible {
+  border-color: #c62828;
+  outline-color: #c62828;
+}
+
 .window-num {
   position: absolute;
   left: 0.5rem;
@@ -1063,7 +1073,7 @@ main h1[tabindex="-1"]:focus {
 }
 
 .window-inner {
-  background: #9e4c46;
+  background: #183c32;
   border-radius: 6px;
   min-height: 56px;
   height: 100%;
@@ -1073,18 +1083,17 @@ main h1[tabindex="-1"]:focus {
   overflow: hidden;
 }
 
+.window-btn[data-open="true"] .window-inner {
+  background: var(--forest);
+}
+
 .window-shutter {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 50%;
-  background: #9e4c46;
+  background: #183c32;
   transition: transform 240ms var(--ease-out);
-}
-
-/* Ventana con regalo: relleno interior rojo (el regalo va encima). */
-.window-btn.is-gift-active .window-inner {
-  background: #c62828;
 }
 
 .window-shutter-l {
