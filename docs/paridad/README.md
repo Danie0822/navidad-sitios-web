@@ -9,7 +9,12 @@ Referencia React (primer padre del merge vanilla `71eab17`):
 1. Las 3 pantallas React (inicio, tarjetas, juegos) quedan en **paridad** de funciones y diseño.
 2. Multimedia y rúbrica que romperían esa paridad viven en **`participantes.html`**.
 3. Nav: solo se suma el enlace a Participantes. Footer: enlace externo.
-4. Countdown el 25/12: vanilla mantiene «¡Feliz Navidad!» (pendiente PO; no forzar salto a 2027).
+## Excepciones PO aprobadas (countdown)
+
+| Diferencia vs React | Vanilla (aprobado) | React |
+| --- | --- | --- |
+| Formato de fecha del objetivo | `25/12/AAAA` (`es-AR`) | `12/25/AAAA` (locale default) |
+| Día 25/12 (00:00 en adelante) | «¡Feliz Navidad!» / 00:00:00:00 | Salta al 25/12 del año siguiente |
 
 ## Tabla React ↔ vanilla
 
@@ -48,5 +53,6 @@ Referencia React (primer padre del merge vanilla `71eab17`):
 | PauseButton regalos (partida) | `juegos.html` `#gifts-pause` · `js/juegos.js` |
 | Iconos CTA landing | `index.html` `.cta-icon` en `.hero-ctas` |
 | `#download-png:disabled` | `css/custom.css` `.btn-cta:disabled` |
-| Fecha countdown (locale default) | `js/main.js` `toLocaleDateString()` |
+| Fecha countdown `25/12` (excepción PO) | `js/main.js` `toLocaleDateString("es-AR")` |
+| «¡Feliz Navidad!» el 25/12 (excepción PO) | `js/countdown-logic.js` + `#cd-done` |
 | Video / audio / img-vínculo / créditos | `participantes.html` |
