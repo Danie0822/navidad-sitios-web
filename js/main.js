@@ -11,12 +11,13 @@
   function initDarkMode() {
     var root = document.documentElement;
     var key = "villa-navidad-theme";
+    var btn = document.getElementById("theme-toggle");
     var saved = localStorage.getItem(key);
     var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     var theme = saved || (prefersDark ? "dark" : "light");
+
     applyTheme(theme);
 
-    var btn = document.getElementById("theme-toggle");
     if (!btn) return;
 
     btn.addEventListener("click", function () {
@@ -41,31 +42,46 @@
     }
   }
 
-  /** Menú hamburguesa con aria-expanded. */
+  /** Menú hamburguesa con aria-expanded, Escape y foco. */
   function initMenu() {
     var toggle = document.getElementById("menu-toggle");
     var panel = document.getElementById("nav-links");
     if (!toggle || !panel) return;
 
-    toggle.addEventListener("click", function () {
-      var open = toggle.getAttribute("aria-expanded") === "true";
-      var next = !open;
+    function setOpen(next) {
       toggle.setAttribute("aria-expanded", next ? "true" : "false");
       panel.classList.toggle("is-open", next);
+      if (next) {
+        var first = panel.querySelector("a");
+        if (first) first.focus();
+      } else {
+        toggle.focus();
+      }
+    }
+
+    toggle.addEventListener("click", function () {
+      var open = toggle.getAttribute("aria-expanded") === "true";
+      setOpen(!open);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape") return;
+      if (toggle.getAttribute("aria-expanded") !== "true") return;
+      setOpen(false);
     });
 
     panel.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function () {
-        toggle.setAttribute("aria-expanded", "false");
-        panel.classList.remove("is-open");
+        setOpen(false);
       });
     });
   }
 
-  /** Contador regresivo a la próxima Navidad (25/dic 00:00 local). */
+  /** Contador regresivo a la próxima Navidad (25/dic; todo el 25 muestra Feliz Navidad). */
   function initCountdown() {
     var root = document.getElementById("countdown");
     if (!root) return;
+    if (!globalThis.VillaCountdown) return;
 
     var elDays = document.getElementById("cd-days");
     var elHours = document.getElementById("cd-hours");
@@ -74,38 +90,25 @@
     var elTarget = document.getElementById("cd-target");
     var elDone = document.getElementById("cd-done");
 
-    function nextChristmas(from) {
-      var y = from.getFullYear();
-      var target = new Date(y, 11, 25, 0, 0, 0, 0);
-      if (from >= target) {
-        target = new Date(y + 1, 11, 25, 0, 0, 0, 0);
-      }
-      return target;
-    }
-
     function pad(n) {
       return String(n).padStart(2, "0");
     }
 
     function tick() {
-      var now = new Date();
-      var target = nextChristmas(now);
-      var diff = Math.max(0, Math.floor((target - now) / 1000));
-      var days = Math.floor(diff / 86400);
-      var hours = Math.floor((diff % 86400) / 3600);
-      var mins = Math.floor((diff % 3600) / 60);
-      var secs = diff % 60;
+      var state = globalThis.VillaCountdown.getCountdownState(new Date());
 
-      if (elDays) elDays.textContent = pad(days);
-      if (elHours) elHours.textContent = pad(hours);
-      if (elMins) elMins.textContent = pad(mins);
-      if (elSecs) elSecs.textContent = pad(secs);
+      if (elDays) elDays.textContent = pad(state.days);
+      if (elHours) elHours.textContent = pad(state.hours);
+      if (elMins) elMins.textContent = pad(state.minutes);
+      if (elSecs) elSecs.textContent = pad(state.seconds);
       if (elTarget) {
         elTarget.textContent =
-          "Objetivo " + target.toLocaleDateString("es-AR") + " 00:00 (hora local)";
+          "Objetivo " +
+          state.target.toLocaleDateString("es-AR") +
+          " 00:00 (hora local)";
       }
       if (elDone) {
-        elDone.hidden = diff !== 0;
+        elDone.hidden = !state.isChristmasDay;
       }
     }
 

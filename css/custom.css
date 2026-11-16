@@ -55,7 +55,8 @@
 html.dark {
   --bg-ivory: #14241f;
   --forest: #f0e6d4;
-  --cta: #d45a62;
+  /* #e07078 sobre #14241f ≈ 5.19:1 (WCAG AA ≥ 4.5) */
+  --cta: #e07078;
   --arch: #8a3a45;
   --gold: #e7b960;
   --snow: #1c2e28;
@@ -365,6 +366,13 @@ hr {
   border-top: 1px solid var(--line);
 }
 
+.site-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 0;
+}
+
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.18em;
@@ -514,15 +522,27 @@ html.dark .field::placeholder {
 .checkbox-row {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
+  gap: 0.75rem;
   margin: 1rem 0;
+  min-height: 44px;
+}
+
+.checkbox-row label {
+  display: block;
+  min-height: 44px;
+  padding-top: 0.55rem;
+  cursor: pointer;
 }
 
 .checkbox-row input[type="checkbox"] {
-  width: 1.15rem;
-  height: 1.15rem;
-  margin-top: 0.15rem;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  flex-shrink: 0;
   accent-color: var(--cta);
+  cursor: pointer;
 }
 
 /* Galería */

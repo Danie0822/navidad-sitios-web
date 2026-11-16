@@ -77,9 +77,14 @@ Abrí `http://localhost:4173/navidad-sitios-web/`.
 | `img/favicon.svg` | Original del repo | CC0 / dominio público del proyecto |
 | `media/villa-navidad.mp4` | Montaje propio a partir de las fotos Unsplash del repo | Derivado bajo Unsplash License |
 | `media/campana.mp3` | Audio sintético original (ffmpeg / sine) | CC0 del proyecto |
-| `fonts/*.woff2` | [Fontsource](https://fontsource.org/) — Inter y Fraunces | SIL Open Font License 1.1 |
+| `fonts/*.woff2` | [Fontsource](https://fontsource.org/) — Inter y Fraunces | SIL Open Font License 1.1 (texto completo en [`fonts/OFL.txt`](fonts/OFL.txt), con copyright de Inter y Fraunces) |
 
 Nada de servicios pagos. Video &lt; 3 MB, audio &lt; 1 MB.
+
+## Fuentes (OFL)
+
+Las WOFF2 de Inter y Fraunces se distribuyen bajo la **SIL Open Font License 1.1**.  
+La licencia completa está en `fonts/OFL.txt`.
 
 ## GitHub Pages
 

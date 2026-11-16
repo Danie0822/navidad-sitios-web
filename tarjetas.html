@@ -2,12 +2,13 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./js/theme-init.js"></script>
     <title>Villa Navidad — Tarjetas</title>
-    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./css/styles.css" />
-    <link rel="stylesheet" href="./css/custom.css" />
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/custom.css">
   </head>
   <body class="page-enter">
     <header class="site-header">
@@ -60,8 +61,7 @@
                   id="destinatario"
                   name="destinatario"
                   placeholder="Nombre de quien recibe"
-                  autocomplete="name"
-                />
+                  autocomplete="name">
                 <p id="error-destinatario" class="form-error" role="alert"></p>
               </div>
 
@@ -87,7 +87,7 @@
               </div>
 
               <div class="checkbox-row">
-                <input type="checkbox" id="consentimiento" name="consentimiento" />
+                <input type="checkbox" id="consentimiento" name="consentimiento">
                 <label for="consentimiento">
                   Confirmo que este mensaje es solo una demo educativa.
                   <small>(No se envía a ningún servidor.)</small>
@@ -107,16 +107,16 @@
             <p>Imágenes como vínculos a la galería de juegos:</p>
             <div class="gallery-grid mt-4">
               <a href="./juegos.html#galeria" title="Ver galería — árbol">
-                <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Árbol de Navidad iluminado" width="160" height="120" />
+                <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Árbol de Navidad iluminado" width="160" height="120">
               </a>
               <a href="./juegos.html#galeria" title="Ver galería — regalos">
-                <img class="img-thumb" src="./img/regalos.jpg" alt="Regalos envueltos con lazo" width="160" height="120" />
+                <img class="img-thumb" src="./img/regalos.jpg" alt="Regalos envueltos con lazo" width="160" height="120">
               </a>
               <a href="./juegos.html#galeria" title="Ver galería — luces">
-                <img class="img-thumb" src="./img/luces.jpg" alt="Luces navideñas borrosas" width="160" height="120" />
+                <img class="img-thumb" src="./img/luces.jpg" alt="Luces navideñas borrosas" width="160" height="120">
               </a>
               <a href="./juegos.html#galeria" title="Ver galería — ambiente">
-                <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente navideño cálido" width="160" height="120" />
+                <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente navideño cálido" width="160" height="120">
               </a>
             </div>
 
@@ -131,7 +131,7 @@
         </div>
       </section>
 
-      <hr />
+      <hr>
 
       <section aria-labelledby="heading-pasos">
         <h2 id="heading-pasos">Pasos sugeridos</h2>
@@ -140,14 +140,14 @@
           <li>Elegí el tono: villa, bosque o regalos.</li>
           <li>Revisá el mensaje en voz alta.</li>
         </ol>
-        <h4>Consejo rápido</h4>
+        <h3>Consejo rápido</h3>
         <ul>
           <li>Menos es más: una frase basta.</li>
           <li>Usá <em>vos</em> si escribís para alguien cercano.</li>
         </ul>
-        <h5>Accesibilidad</h5>
+        <h4>Accesibilidad</h4>
         <p>Los errores del formulario se anuncian con <code>role="alert"</code>.</p>
-        <h6>Pie de sección</h6>
+        <h5>Pie de sección</h5>
         <p><small>Textos reutilizados del taller Scout V2.</small></p>
       </section>
     </main>
@@ -161,6 +161,7 @@
       </p>
     </footer>
 
+    <script src="./js/countdown-logic.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/nav-current.js"></script>
     <script src="./js/form.js"></script>
