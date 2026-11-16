@@ -1,0 +1,153 @@
+<!-- Propósito: catálogo de juegos y galería multimedia con video y audio libres. -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Villa Navidad — Juegos</title>
+    <link rel="icon" href="./img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/custom.css" />
+  </head>
+  <body class="page-enter">
+    <header class="site-header">
+      <nav class="site-nav page-shell" aria-label="Principal">
+        <a class="brand-mark" href="./index.html">
+          <span class="brand-diamond" aria-hidden="true"></span>
+          Villa Navidad
+        </a>
+        <div class="nav-end">
+          <div id="nav-links" class="nav-links">
+            <a class="nav-link" data-page="index.html" href="./index.html">Inicio</a>
+            <a class="nav-link" data-page="tarjetas.html" href="./tarjetas.html">Tarjetas</a>
+            <a class="nav-link" data-page="juegos.html" href="./juegos.html">Juegos</a>
+          </div>
+          <div class="nav-actions">
+            <button type="button" id="theme-toggle" class="btn-icon" aria-pressed="false" aria-label="Cambiar a modo oscuro">
+              Tema
+            </button>
+            <button
+              type="button"
+              id="menu-toggle"
+              class="menu-toggle"
+              aria-controls="nav-links"
+              aria-expanded="false"
+              aria-label="Abrir menú"
+            >
+              <span class="menu-toggle-bars" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-shell py-8 sm:py-10">
+      <section aria-labelledby="heading-juegos">
+        <h1 id="heading-juegos">Jugá un ratito.</h1>
+        <p class="lead">Dos juegos. Toda la magia.</p>
+
+        <div class="game-cards mt-8">
+          <article class="game-card">
+            <img src="./img/ambiente.jpg" alt="Ilustración sugerida para el juego Memoria" width="640" height="360" />
+            <div class="game-card-body">
+              <h2>Memoria</h2>
+              <p>Encontrá las ocho parejas.</p>
+              <p>
+                <small>Versión estática: ideas del juego original de la villa.</small>
+              </p>
+              <ol>
+                <li>Dá vuelta dos cartas.</li>
+                <li>Si coinciden, suman pareja.</li>
+                <li>Completá las ocho.</li>
+              </ol>
+              <a class="btn-cta mt-4" href="./tarjetas.html">Ir al taller mientras tanto</a>
+            </div>
+          </article>
+
+          <article class="game-card">
+            <img src="./img/regalos.jpg" alt="Ilustración sugerida para Regalos escondidos" width="640" height="360" />
+            <div class="game-card-body">
+              <h2>Regalos escondidos</h2>
+              <p>Tocá el regalo antes de que se esconda.</p>
+              <ul>
+                <li>Nueve ventanas en el arco.</li>
+                <li>Aparece un regalo un instante.</li>
+                <li>Sumá puntos con reflejos rápidos.</li>
+              </ul>
+              <h3>Ronda sugerida</h3>
+              <p><strong>30 segundos</strong> · aparición breve · intervalo corto.</p>
+              <h4>Truco</h4>
+              <p><em>Mirar el centro</em> ayuda a atrapar más regalos.</p>
+              <h5>Modo calma</h5>
+              <p>Si preferís menos movimiento, activá «reducir movimiento» en el sistema.</p>
+              <h6>Recordatorio</h6>
+              <p><small>Los juegos interactivos completos vivían en la SPA; aquí queda la guía.</small></p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <hr />
+
+      <section id="galeria" aria-labelledby="heading-galeria">
+        <h2 id="heading-galeria">Galería y multimedia</h2>
+        <p>
+          Fotos libres (Unsplash) y un video / audio livianos generados para esta entrega.
+          Tocá una imagen para abrirla en grande vía enlace interno a esta misma sección.
+        </p>
+
+        <div class="gallery-grid mt-4">
+          <a href="#galeria">
+            <img class="img-thumb" src="./img/arbol-navidad.jpg" alt="Árbol de Navidad" width="160" height="120" />
+          </a>
+          <a href="#galeria">
+            <img class="img-thumb" src="./img/luces.jpg" alt="Luces cálidas" width="160" height="120" />
+          </a>
+          <a href="#galeria">
+            <img class="img-thumb" src="./img/regalos.jpg" alt="Regalos" width="160" height="120" />
+          </a>
+          <a href="#galeria">
+            <img class="img-thumb" src="./img/ambiente.jpg" alt="Ambiente" width="160" height="120" />
+          </a>
+        </div>
+
+        <div class="media-block">
+          <h3>Video corto de la villa</h3>
+          <p>Montaje a partir de las fotos del repo (menos de 3&nbsp;MB).</p>
+          <video controls preload="metadata" poster="./img/luces.jpg">
+            <source src="./media/villa-navidad.mp4" type="video/mp4" />
+            Tu navegador no reproduce video HTML5.
+          </video>
+        </div>
+
+        <div class="media-block">
+          <h3>Audio de campanilla</h3>
+          <p>Tono sintético original del proyecto (menos de 1&nbsp;MB).</p>
+          <audio controls preload="metadata">
+            <source src="./media/campana.mp3" type="audio/mpeg" />
+            Tu navegador no reproduce audio HTML5.
+          </audio>
+        </div>
+
+        <p>
+          Enlace externo de referencia:
+          <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.es" rel="noopener noreferrer" target="_blank">
+            Creative Commons CC0
+          </a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer page-shell">
+      <p>Villa Navidad — con cariño. Sin cuentas.</p>
+      <p>
+        <a href="./index.html">Inicio</a>
+        ·
+        <a href="./tarjetas.html">Tarjetas</a>
+      </p>
+    </footer>
+
+    <script src="./js/main.js"></script>
+    <script src="./js/nav-current.js"></script>
+  </body>
+</html>
