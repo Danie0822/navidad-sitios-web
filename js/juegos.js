@@ -190,10 +190,14 @@
       if (open.length >= 2) return;
 
       open = open.concat([idx]);
-      paint();
-      if (open.length < 2) return;
+      if (open.length < 2) {
+        paint();
+        return;
+      }
 
+      // Un intento = un par de volteretas; bloquear clics mientras se comparan.
       lock = true;
+      paint();
       var result = G.resolveMemoryFlip(
         { deck: deck, matched: matched, pairs: pairs, attempts: attempts },
         open[0],
@@ -207,12 +211,12 @@
         lock = false;
         paint();
       } else {
+        renderScore();
         closeTimer = window.setTimeout(function () {
           open = [];
           lock = false;
           paint();
-        }, 800);
-        renderScore();
+        }, 1000);
       }
     }
 

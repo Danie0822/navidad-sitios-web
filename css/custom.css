@@ -208,7 +208,7 @@ hr {
   display: inline-block;
   width: 0.875rem;
   height: 0.875rem;
-  background: var(--cta);
+  background: var(--forest);
   border-radius: 2px;
   transform: rotate(45deg);
 }
@@ -980,6 +980,7 @@ ol {
 }
 
 .memory-face {
+  display: block;
   position: relative;
   width: 100%;
   height: 100%;
@@ -998,6 +999,7 @@ ol {
   display: grid;
   place-items: center;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   border-radius: 8px;
 }
 
@@ -1009,6 +1011,7 @@ ol {
 .memory-back svg {
   width: 72%;
   height: 72%;
+  display: block;
 }
 
 .windows-grid {
