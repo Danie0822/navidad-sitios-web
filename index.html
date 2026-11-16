@@ -22,6 +22,7 @@
             <a class="nav-link" data-page="index.html" href="./index.html">Inicio</a>
             <a class="nav-link" data-page="tarjetas.html" href="./tarjetas.html">Tarjetas</a>
             <a class="nav-link" data-page="juegos.html" href="./juegos.html">Juegos</a>
+            <a class="nav-link" data-page="participantes.html" href="./participantes.html">Participantes</a>
           </div>
           <div class="nav-actions">
             <button type="button" id="theme-toggle" class="btn-icon" aria-pressed="false" aria-label="Cambiar a modo oscuro">
@@ -46,15 +47,29 @@
       <section class="hero-grid reveal" aria-labelledby="hero-title">
         <div>
           <p class="eyebrow">Un pequeño mundo para compartir</p>
-          <h1 id="hero-title">
+          <h1 id="hero-title" tabindex="-1">
             La magia
             <br>
             está en dar.
           </h1>
           <p class="lead">Creá una tarjeta. Regalá un ratito de alegría.</p>
           <div class="hero-ctas">
-            <a class="btn-cta" href="./tarjetas.html">Crear tarjeta</a>
-            <a class="btn-ghost" href="./juegos.html">Jugar</a>
+            <a class="btn-cta gap-2" href="./tarjetas.html">
+              <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="3" y="8" width="18" height="13" rx="2" stroke-width="1.5"></rect>
+                <path d="M12 8v13" stroke-width="1.5"></path>
+                <path d="M3 12h18" stroke-width="1.5"></path>
+                <path d="M7 6c0-1.1.9-2 2-2 1.9 0 3 2 3 2s-1.1 2-3 2c-1.1 0-2-.9-2-2Z" stroke-width="1.5"></path>
+                <path d="M17 6c0-1.1-.9-2-2-2-1.9 0-3 2-3 2s1.1 2 3 2c1.1 0 2-.9 2-2Z" stroke-width="1.5"></path>
+              </svg>
+              Crear tarjeta
+            </a>
+            <a class="btn-ghost gap-2" href="./juegos.html">
+              <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M12 3l3 4h-2l2 3h-2l3 4h-4v4H9v-4H5l3-4H6l2-3H6l3-4Z" stroke-width="1.5" stroke-linejoin="round"></path>
+              </svg>
+              Jugar
+            </a>
           </div>
         </div>
 
@@ -194,42 +209,12 @@
         </div>
         <p id="cd-done" class="text-center mt-3" hidden>¡Feliz Navidad!</p>
       </section>
-
-      <hr>
-
-      <section aria-labelledby="heading-ideas" class="mt-8">
-        <h2 id="heading-ideas">Ideas para esta villa</h2>
-        <p>
-          Villa Navidad es un <strong>pequeño mundo</strong> para compartir:
-          <em>tarjetas</em>, juegos y un rato de calma.
-          <small>Sin cuentas ni servicios pagos.</small>
-        </p>
-        <div class="list-panel mt-4">
-          <h3>Cómo empezar</h3>
-          <ol>
-            <li>Elegí una tarjeta en el taller.</li>
-            <li>Escribí un mensaje con cariño.</li>
-            <li>Jugá un ratito en el catálogo.</li>
-          </ol>
-          <h4>También podés</h4>
-          <ul>
-            <li>Activar el modo oscuro desde la barra.</li>
-            <li>Explorar la galería en la página de juegos.</li>
-          </ul>
-          <h5>Detalle editorial</h5>
-          <p>Paleta marfil, verde bosque y granate; tipografía serif + sans.</p>
-          <h6>Nota</h6>
-          <p>Este sitio es una entrega educativa en HTML, CSS y JS puros.</p>
-        </div>
-      </section>
     </main>
 
     <footer class="site-footer page-shell">
       <p>Villa Navidad — con cariño. Sin cuentas.</p>
       <p>
-        Enlace interno:
-        <a href="./tarjetas.html">ir al taller</a>
-        · Enlace externo:
+        Enlace externo:
         <a href="https://es.wikipedia.org/wiki/Navidad" rel="noopener noreferrer" target="_blank">Navidad en Wikipedia</a>
       </p>
     </footer>

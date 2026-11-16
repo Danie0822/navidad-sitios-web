@@ -44,17 +44,19 @@ function contrastRatio(hexA, hexB) {
 }
 
 async function main() {
-  const countdown = spawnSync("node", ["scripts/test-countdown.mjs"], {
-    cwd: root,
-    encoding: "utf8",
-  });
-  if (countdown.status !== 0) {
-    console.error(countdown.stdout || "");
-    console.error(countdown.stderr || "");
-    console.error("FAIL countdown unit tests");
-    process.exit(1);
+  for (const script of ["test-countdown.mjs", "test-cards.mjs", "test-games.mjs"]) {
+    const unit = spawnSync("node", ["scripts/" + script], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    if (unit.status !== 0) {
+      console.error(unit.stdout || "");
+      console.error(unit.stderr || "");
+      console.error("FAIL unit tests:", script);
+      process.exit(1);
+    }
+    console.log((unit.stdout || "").trim());
   }
-  console.log((countdown.stdout || "").trim());
 
   const grepIssues = grepHtmlViolations();
   if (grepIssues.length) {
@@ -79,7 +81,7 @@ async function main() {
   await new Promise((r) => setTimeout(r, 600));
 
   const browser = await chromium.launch({ headless: true });
-  const pages = ["/", "/tarjetas.html", "/juegos.html"];
+  const pages = ["/", "/tarjetas.html", "/juegos.html", "/participantes.html"];
   const widths = [375, 768, 1280];
   let failed = false;
   const report = [];
@@ -169,39 +171,164 @@ async function main() {
       await page.locator("#theme-toggle").click();
 
       if (path.includes("tarjetas")) {
-        await page.locator("#tarjeta-form button[type='submit']").click();
-        const errVisible = await page.locator("#error-destinatario").evaluate((el) =>
+        await page.setViewportSize({ width: 1280, height: 900 });
+        const disabled = await page.locator("#download-png").isDisabled();
+        if (!disabled) {
+          failed = true;
+          report.push("tarjetas: Descargar PNG debería estar disabled vacío");
+        }
+        const disabledBg = await page.locator("#download-png").evaluate((el) => getComputedStyle(el).backgroundColor);
+        if (disabledBg === "rgb(167, 44, 54)") {
+          failed = true;
+          report.push(`tarjetas: disabled se ve como CTA activo (${disabledBg})`);
+        } else {
+          report.push(`tarjetas: disabled style OK (${disabledBg})`);
+        }
+        const help = await page.locator("#download-help").textContent();
+        if (!/destinatario y mensaje/i.test(help || "")) {
+          failed = true;
+          report.push("tarjetas: ayuda de validación ausente");
+        }
+
+        await page.fill("#dest", "Ana");
+        await page.fill("#msg", "Felices fiestas para vos");
+        const thumbBtn = page.locator('.template-pick[data-template="bosque"]');
+        await thumbBtn.evaluate((el) => el.click());
+        const plantilla = await page.locator("#plantilla").inputValue();
+        const pressed = await thumbBtn.getAttribute("aria-pressed");
+        if (plantilla !== "bosque" || pressed !== "true") {
+          failed = true;
+          report.push(`tarjetas: plantilla bosque no seleccionada (val=${plantilla}, aria=${pressed})`);
+        }
+        const kept = await page.locator("#dest").inputValue();
+        if (kept !== "Ana") {
+          failed = true;
+          report.push("tarjetas: cambiar plantilla no conservó campos");
+        }
+
+        const [download] = await Promise.all([
+          page.waitForEvent("download"),
+          page.locator("#download-png").click(),
+        ]);
+        const dlPath = await download.path();
+        if (!dlPath) {
+          failed = true;
+          report.push("tarjetas: descarga PNG sin path");
+        } else {
+          const buf = readFileSync(dlPath);
+          if (buf.length < 1000 || buf[0] !== 0x89 || buf[1] !== 0x50) {
+            failed = true;
+            report.push("tarjetas: PNG inválido");
+          } else {
+            report.push(`tarjetas: PNG OK (${buf.length} bytes)`);
+          }
+        }
+        const ready = await page.locator("#png-ready").evaluate((el) => !el.hidden);
+        if (!ready) {
+          failed = true;
+          report.push("tarjetas: aviso PNG listo no visible");
+        }
+      }
+
+      if (path.includes("participantes")) {
+        const hasVideo = (await page.locator("video source[src*='villa-navidad']").count()) > 0;
+        const hasAudio = (await page.locator("audio source[src*='campana']").count()) > 0;
+        const imgLink = page.locator('a[href="./index.html"] img.img-thumb');
+        const ext = page.locator('.site-footer a[target="_blank"]');
+        const box = await page.locator("#confirmacion").boundingBox();
+        if (!hasVideo || !hasAudio) {
+          failed = true;
+          report.push("participantes: falta video/audio");
+        }
+        if ((await imgLink.count()) < 1) {
+          failed = true;
+          report.push("participantes: falta imagen como vínculo");
+        }
+        if ((await ext.count()) < 1) {
+          failed = true;
+          report.push("participantes: falta enlace externo en footer");
+        }
+        if (!box || box.width < 44 || box.height < 44) {
+          failed = true;
+          report.push(`participantes: checkbox hit ${box?.width}x${box?.height}`);
+        } else {
+          report.push("participantes: video/audio/img-link/checkbox OK");
+        }
+        await page.locator("#participantes-form button[type='submit']").click();
+        const errVisible = await page.locator("#error-confirmacion").evaluate((el) =>
           el.classList.contains("is-visible")
         );
         if (!errVisible) {
           failed = true;
-          report.push("tarjetas: validación no mostró error");
+          report.push("participantes: validación checkbox no mostró error");
+        }
+      }
+
+      if (path.includes("juegos")) {
+        const catalogVisible = await page.locator("#view-catalog").isVisible();
+        const catCount = await page.locator(".catalog-link").count();
+        if (!catalogVisible || catCount !== 2) {
+          failed = true;
+          report.push(`juegos: selector esperado 2 links, got ${catCount}`);
+        }
+        const windows = await page.locator("#catalog-regalos .catalog-svg > g").count();
+        if (windows < 9) {
+          failed = true;
+          report.push(`juegos: catálogo regalos ventanas=${windows}, esperado ≥9`);
+        }
+        const catPause = page.locator("#view-catalog [data-motion-pause]");
+        if ((await catPause.count()) < 1) {
+          failed = true;
+          report.push("juegos: falta PauseButton en catálogo");
         }
 
-        const box = await page.locator("#consentimiento").boundingBox();
-        if (!box || box.width < 44 || box.height < 44) {
+        await page.locator("#catalog-memoria").click();
+        await page.waitForTimeout(100);
+        if (!(await page.locator("#view-memoria").isVisible())) {
           failed = true;
-          report.push(`tarjetas: checkbox hit ${box?.width}x${box?.height}`);
+          report.push("juegos: no entró a memoria");
+        }
+        const cells = page.locator("#memory-board [role='gridcell']");
+        const cellCount = await cells.count();
+        if (cellCount !== 16) {
+          failed = true;
+          report.push(`juegos: memoria cartas=${cellCount}, esperado 16`);
+        }
+        await cells.nth(0).click();
+        const symbol = await cells.nth(0).getAttribute("data-symbol");
+        const pair = page.locator(`#memory-board [data-symbol="${symbol}"]`);
+        await pair.nth(1).click();
+        const scoreText = await page.locator("#memory-score").textContent();
+        if (!/Parejas 1\/8/.test(scoreText || "")) {
+          failed = true;
+          report.push(`juegos: memoria no sumó pareja (${scoreText})`);
+        }
+        await page.locator("#memory-reset").click();
+        const resetText = await page.locator("#memory-score").textContent();
+        if (!/Parejas 0\/8/.test(resetText || "") || !/Intentos 0/.test(resetText || "")) {
+          failed = true;
+          report.push(`juegos: memoria reinicio falló (${resetText})`);
+        }
+
+        await page.locator('a[data-back="memoria"]').click();
+        await page.locator("#catalog-regalos").click();
+        await page.waitForTimeout(100);
+        await page.locator("#gifts-start").click();
+        const open = page.locator('#gifts-board [data-window][data-open="true"]');
+        await open.first().waitFor({ timeout: 4000 });
+        await open.first().click();
+        const giftsScore = await page.locator("#gifts-score").textContent();
+        if (!/Regalos 1/.test(giftsScore || "")) {
+          failed = true;
+          report.push(`juegos: regalos no sumó (${giftsScore})`);
+        }
+        await page.locator("#gifts-reset").click();
+        const playVisible = await page.locator("#gifts-start").isVisible();
+        if (!playVisible) {
+          failed = true;
+          report.push("juegos: regalos reinicio no volvió a Jugar");
         } else {
-          report.push(`tarjetas: checkbox ${box.width}x${box.height}`);
-        }
-
-        const footerLink = await page.locator(".site-footer a").first().boundingBox();
-        if (!footerLink || footerLink.height < 24) {
-          failed = true;
-          report.push(`tarjetas: footer link h=${footerLink?.height}`);
-        }
-
-        await page.fill("#destinatario", "Ana");
-        await page.fill("#mensaje", "Felices fiestas para vos");
-        await page.check("#consentimiento");
-        await page.locator("#tarjeta-form button[type='submit']").click();
-        const ok = await page.locator("#form-success").evaluate((el) =>
-          el.classList.contains("is-visible")
-        );
-        if (!ok) {
-          failed = true;
-          report.push("tarjetas: éxito de formulario no visible");
+          report.push("juegos: selector + memoria + regalos OK");
         }
       }
 

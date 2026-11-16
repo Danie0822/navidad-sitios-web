@@ -5,7 +5,31 @@
 
   initDarkMode();
   initMenu();
+  initFocusHeading();
   initCountdown();
+
+  /** Paridad React FocusHeading: enfoca el H1 de la vista visible sin scroll. */
+  function initFocusHeading() {
+    var headings = document.querySelectorAll("main h1[tabindex='-1']");
+    var target = null;
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      var section = h.closest("section");
+      if (section && section.hidden) continue;
+      target = h;
+      break;
+    }
+    if (!target) return;
+    try {
+      target.focus({ preventScroll: true, focusVisible: true });
+    } catch (err) {
+      try {
+        target.focus({ preventScroll: true });
+      } catch (err2) {
+        target.focus();
+      }
+    }
+  }
 
   /** Aplica y guarda el tema claro/oscuro en localStorage. */
   function initDarkMode() {
@@ -102,6 +126,7 @@
       if (elMins) elMins.textContent = pad(state.minutes);
       if (elSecs) elSecs.textContent = pad(state.seconds);
       if (elTarget) {
+        /* Excepción PO aprobada: formato 25/12 (es-AR), no el 12/25 de React. */
         elTarget.textContent =
           "Objetivo " +
           state.target.toLocaleDateString("es-AR") +

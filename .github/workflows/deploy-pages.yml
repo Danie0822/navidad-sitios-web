@@ -27,7 +27,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p _site
-          cp index.html tarjetas.html juegos.html _site/
+          cp index.html tarjetas.html juegos.html participantes.html _site/
           cp -r css js img media fonts _site/
           # styles.css ya va compilado en el repo
 

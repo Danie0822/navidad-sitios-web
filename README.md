@@ -43,28 +43,22 @@ Abrí `http://localhost:4173/navidad-sitios-web/`.
 
 ```
 /
-  index.html          # Inicio
-  tarjetas.html       # Taller + formulario
-  juegos.html         # Juegos + galería / media
-  css/
-    input.css         # Entrada Tailwind CLI
-    styles.css        # Tailwind compilado (commitear)
-    custom.css        # CSS propio (tokens, layout, animaciones)
-  js/
-    main.js           # Menú, modo oscuro, countdown
-    form.js           # Validación de formulario
-    nav-current.js    # aria-current de navegación
-  img/                # Imágenes libres
-  media/              # Video y audio livianos
-  fonts/              # WOFF2 autohospedados (OFL)
+  index.html            # Landing + countdown (paridad React)
+  tarjetas.html         # CardEditor (paridad React)
+  juegos.html           # Selector + memoria + regalos (paridad React)
+  participantes.html    # Rúbrica multimedia + créditos Daniel/Oscar
+  docs/paridad/         # Capturas React vs vanilla
+  css/ …  js/ …  img/ …  media/ …  fonts/
 ```
+
+Paridad React `2ad0b349` en las 3 pantallas; rúbrica extra en Participantes (ver `docs/paridad/README.md`).
 
 ## Funcionalidades JS
 
-1. Menú hamburguesa (`aria-expanded`)
-2. Validación de formulario (tarjetas)
-3. Modo oscuro persistente (`localStorage`)
-4. Cuenta regresiva a Navidad (25/dic 00:00 hora local)
+1. Menú hamburguesa (`aria-expanded`) + tema oscuro
+2. Taller de tarjetas (preview DOM + PNG vía html-to-image vendorizado)
+3. Cuenta regresiva a Navidad
+4. Catálogo de juegos + memoria + regalos escondidos (hash views)
 
 ## Créditos y licencias de assets
 
@@ -96,4 +90,7 @@ Copia HTML + `css` + `js` + `img` + `media` + `fonts` sin Vite.
 - `npm run css:build` — compilar Tailwind a `css/styles.css`
 - `npm run css:watch` — recompilar al guardar
 - `npm run preview:pages` — servir bajo `/navidad-sitios-web/`
+- `npm run test:countdown` — unit tests del contador
+- `npm run test:cards` — unit tests de validación / export PNG
+- `npm run test:games` — unit tests de memoria y regalos
 - `npm run verify` — comprobaciones Playwright + grep de la rúbrica
