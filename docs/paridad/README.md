@@ -29,14 +29,17 @@ Referencia React (primer padre del merge vanilla `71eab17`):
 | `utils/cardFit.ts` | `js/card-preview.js` (`cardTextOverflows`) |
 | `utils/shuffle.ts` + siluetas | `js/game-logic.js` + iconos en `js/juegos.js` |
 
-## Conflictos rúbrica vs paridad exacta (STOP)
+## Colocación rúbrica (regla PO — solo secciones React existentes)
 
-Integrar estos ítems de rúbrica **cambiaría** pantallas/flujos que en React no existían; por instrucción del PO se detuvo y no se inventó:
+| Ítem | Dónde | Archivo:línea |
+| --- | --- | --- |
+| Video corto | Hero de landing (sección React existente) | `index.html:60` (`.hero-video`), source `index.html:67` |
+| Audio play/mute | Header del catálogo de juegos | `juegos.html:54` (`#audio-toggle`), `juegos.html:57–58` (`#game-audio`), JS `js/juegos.js:15` |
+| Imágenes como vínculos | Miniaturas de plantilla | `tarjetas.html:57–86` (`<a class="template-pick" href="#vista-previa">` + `<img class="img-thumb">`), ancla `tarjetas.html:121` |
+| Enlace externo | Footer existente | `index.html:213`, `tarjetas.html:155`, `juegos.html:191` |
+| Placeholder | Campos del editor React | `tarjetas.html:98` (`#dest`), `tarjetas.html:111` (`#msg`) |
 
-1. **checkbox** — `CardEditor` React no tenía casillas; agregarlas altera el taller.
-2. **video / audio** — Landing y Juegos React no tenían multimedia; agregarlos altera esas pantallas.
-3. **Escalera h3–h6 / secciones didácticas / galería** — no estaban en React Scout V2.
-4. **Imágenes como vínculos Unsplash** — React usaba miniaturas SVG de plantilla en botones, no galería.
-5. **3 archivos HTML vs rutas SPA** — React tenía `/juegos/memoria` y `/juegos/regalos`; en vanilla se emulan con hash en `juegos.html` (sigue habiendo exactamente 3 páginas).
+Sin galería, sin página nueva, sin sección nueva, sin función nueva de producto.
 
-**Sí en paridad React:** placeholders en `#dest` / `#msg`.
+## Nota de arquitectura
+React tenía `/juegos/memoria` y `/juegos/regalos`; en vanilla se emulan con hash en `juegos.html` (siguen siendo exactamente 3 páginas HTML).

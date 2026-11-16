@@ -79,15 +79,6 @@
     var d = data();
     Preview.renderCard(previewHost, d, "preview");
     Preview.renderCard(exportHost, d, "export");
-    document.querySelectorAll(".thumb-art").forEach(function (wrap) {
-      var id = wrap.getAttribute("data-thumb");
-      var node = wrap.querySelector(".card-art");
-      if (!node) {
-        node = document.createElement("div");
-        wrap.appendChild(node);
-      }
-      Preview.renderCard(node, { destinatario: "", mensaje: "", plantilla: id }, "thumb");
-    });
     document.querySelectorAll(".template-pick").forEach(function (btn) {
       var mark = btn.querySelector(".chosen-mark");
       if (mark) mark.hidden = btn.getAttribute("aria-pressed") !== "true";
@@ -180,6 +171,7 @@
       setPlantilla(btn.getAttribute("data-template"));
     });
   });
+  // Las miniaturas son <a href="#vista-previa"><img></a> (rúbrica: imágenes como vínculos).
 
   ["input", "change"].forEach(function (evt) {
     form.addEventListener(evt, function () {
@@ -234,14 +226,6 @@
   if (window.ResizeObserver && scaleBox) {
     new ResizeObserver(applyZoom).observe(scaleBox);
   }
-
-  // init thumbs shells
-  document.querySelectorAll(".thumb-art").forEach(function (wrap) {
-    if (!wrap.querySelector(".card-art")) {
-      var node = document.createElement("div");
-      wrap.appendChild(node);
-    }
-  });
 
   setPlantilla(plantillaInput.value || "villa");
   updateCounters();

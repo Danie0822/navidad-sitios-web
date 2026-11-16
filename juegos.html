@@ -50,6 +50,15 @@
             <h1 id="heading-juegos">Jugá un ratito.</h1>
             <p class="lead">Dos juegos. Toda la magia.</p>
           </div>
+          <div class="audio-chip">
+            <button type="button" id="audio-toggle" class="btn-ghost" aria-pressed="false" aria-controls="game-audio">
+              Sonido
+            </button>
+            <audio id="game-audio" preload="metadata" loop>
+              <source src="./media/campana.mp3" type="audio/mpeg">
+              Tu navegador no reproduce audio HTML5.
+            </audio>
+          </div>
         </div>
 
         <div class="catalog-grid mt-8">
@@ -178,6 +187,9 @@
 
     <footer class="site-footer page-shell">
       <p>Villa Navidad — con cariño. Sin cuentas.</p>
+      <p>
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.es" rel="noopener noreferrer" target="_blank">Creative Commons CC0</a>
+      </p>
     </footer>
 
     <script src="./js/countdown-logic.js"></script>

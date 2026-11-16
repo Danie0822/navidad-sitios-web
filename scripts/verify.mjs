@@ -185,11 +185,15 @@ async function main() {
 
         await page.fill("#dest", "Ana");
         await page.fill("#msg", "Felices fiestas para vos");
-        await page.locator('.template-pick[data-template="bosque"]').evaluate((el) => el.click());
+        const thumbLink = page.locator('.template-pick[data-template="bosque"]');
+        const thumbImg = thumbLink.locator("img");
+        if ((await thumbImg.count()) < 1) {
+          failed = true;
+          report.push("tarjetas: miniatura sin <img> (imágenes como vínculos)");
+        }
+        await thumbLink.evaluate((el) => el.click());
         const plantilla = await page.locator("#plantilla").inputValue();
-        const pressed = await page
-          .locator('.template-pick[data-template="bosque"]')
-          .getAttribute("aria-pressed");
+        const pressed = await thumbLink.getAttribute("aria-pressed");
         if (plantilla !== "bosque" || pressed !== "true") {
           failed = true;
           report.push(`tarjetas: plantilla bosque no seleccionada (val=${plantilla}, aria=${pressed})`);
@@ -224,7 +228,25 @@ async function main() {
         }
       }
 
+      if (path === "/" || path.endsWith("/")) {
+        const videoCount = await page.locator("video source[src*='villa-navidad']").count();
+        if (!videoCount) {
+          failed = true;
+          report.push("index: falta video corto en landing");
+        } else {
+          report.push("index: video en hero OK");
+        }
+      }
+
       if (path.includes("juegos")) {
+        const audioBtn = page.locator("#audio-toggle");
+        const audioEl = page.locator("#game-audio");
+        if ((await audioBtn.count()) !== 1 || (await audioEl.count()) !== 1) {
+          failed = true;
+          report.push("juegos: falta play/mute de audio en catálogo");
+        } else {
+          report.push("juegos: audio play/mute OK");
+        }
         const catalogVisible = await page.locator("#view-catalog").isVisible();
         const catCount = await page.locator(".catalog-link").count();
         if (!catalogVisible || catCount !== 2) {
